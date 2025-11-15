@@ -32,6 +32,34 @@
       margin-right: 10px;
       display: inline-block;
     }
+
+        /* Marqueurs ronds personnalisés */
+    .custom-marker {
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 8px rgba(0,0,0,0.4);
+    }
+
+    .rating-5 {
+      background: #1a9850; /* vert foncé */
+    }
+
+    .rating-4 {
+      background: #66bd63; /* vert clair */
+    }
+
+    .rating-3 {
+      background: #fee08b; /* jaune */
+    }
+
+    .rating-2 {
+      background: #f46d43; /* orange */
+    }
+
+    .rating-1 {
+      background: #d73027; /* rouge */
+    }
+
   </style>
 </head>
 <body>
@@ -88,10 +116,8 @@
       return "★".repeat(rating) + "☆".repeat(5 - rating);
     }
 
-    // 5. Ajout des points (circleMarker) + popup avec photo
+    // 5. Ajout des points avec icône personnalisée + popup avec photo
     spots.forEach(spot => {
-      const color = getColor(spot.rating);
-
       const popupContent = `
         <b>${spot.name}</b><br>
         ${spot.desc}<br>
@@ -100,14 +126,15 @@
              style="max-width:200px; margin-top:5px; display:block;">
       `;
 
-      L.circleMarker(spot.coords, {
-        radius: 9,
-        color: color,
-        fillColor: color,
-        fillOpacity: 0.9
-      })
-      .addTo(map)
-      .bindPopup(popupContent);
+      const icon = L.divIcon({
+        className: `custom-marker rating-${spot.rating}`,
+        iconSize: [24, 24],     // taille du point
+        iconAnchor: [12, 12]    // centré sur les coordonnées
+      });
+
+      L.marker(spot.coords, { icon })
+        .addTo(map)
+        .bindPopup(popupContent);
     });
 
     // 6. Légende étoiles + couleurs
