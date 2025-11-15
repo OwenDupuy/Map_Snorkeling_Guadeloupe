@@ -77,14 +77,14 @@
     /* ----------------------------------------------------------
        3. Tuiles (fonds de carte)
     ----------------------------------------------------------- */
-    const osm = L.tileLayer(
-      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      { attribution: '© OpenStreetMap contributors' }
-    );
-
     const satellite = L.tileLayer(
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
       { attribution: 'Tiles © Esri — Source: Esri, USDA, USGS, GeoEye, etc.' }
+    );
+    
+    const osm = L.tileLayer(
+      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      { attribution: '© OpenStreetMap contributors' }
     );
 
     const relief = L.tileLayer(
@@ -93,14 +93,14 @@
     );
 
     // Couche par défaut
-    osm.addTo(map);
+    satellite.addTo(map);
 
     /* ----------------------------------------------------------
        4. Contrôle permettant de changer de fond de carte
     ----------------------------------------------------------- */
     const baseLayers = {
-      "Standard": osm,
       "Satellite": satellite,
+      "Classique (OSM)": osm,
       "Relief": relief
     };
 
