@@ -11,12 +11,55 @@
 </head>
 <body>
   <div id="map"></div>
+
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
+    // 1. Création de la carte
     const map = L.map('map').setView([16.265, -61.551], 10);
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap'
     }).addTo(map);
+
+    // 2. Liste de spots avec photos
+    const spots = [
+      {
+        name: "Anse Pigeon / Malendure",
+        coords: [16.167, -61.789],
+        desc: "Tortues, fonds peu profonds, accessible depuis la plage.",
+        level: "Facile",
+        image: "images/malendure.jpg"
+      },
+      {
+        name: "Réserve Cousteau - Îlets Pigeon",
+        coords: [16.1675, -61.794],
+        desc: "Très beaux coraux et poissons tropicaux, accès en bateau.",
+        level: "Intermédiaire",
+        image: "images/ilets_pigeon.jpg"
+      },
+      {
+        name: "Plage de la Caravelle",
+        coords: [16.217, -61.387],
+        desc: "Lagons calmes, idéal pour débutants et familles.",
+        level: "Très facile",
+        image: "images/caravelle.jpg"
+      }
+    ];
+
+    // 3. Ajout des marqueurs + popup avec photo
+    spots.forEach(spot => {
+      const popupContent = `
+        <b>${spot.name}</b><br>
+        ${spot.desc}<br>
+        <i>Niveau : ${spot.level}</i><br>
+        <img src="${spot.image}" alt="${spot.name}" style="max-width:200px; margin-top:5px; display:block;">
+      `;
+
+      L.marker(spot.coords)
+        .addTo(map)
+        .bindPopup(popupContent);
+    });
   </script>
 </body>
 </html>
+
