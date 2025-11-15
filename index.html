@@ -1,22 +1,81 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-  <meta charset="utf-8" />
-  <title>Snorkeling en Guadeloupe</title>
-
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <style>
-    #map { height: 100vh; width: 100%; }
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2113.65">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000; min-height: 14.0px}
+    span.s1 {font-kerning: none}
   </style>
 </head>
 <body>
-  <div id="map"></div>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script>
-    const map = L.map('map').setView([16.265, -61.551], 10);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap'
-    }).addTo(map);
-  </script>
+<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
+<p class="p1"><span class="s1">&lt;html&gt;</span></p>
+<p class="p1"><span class="s1">&lt;head&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;meta charset="utf-8" /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;title&gt;Snorkeling en Guadeloupe&lt;/title&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;style&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>#map { height: 100vh; width: 100%; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
+<p class="p1"><span class="s1">&lt;body&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;div id="map"&gt;&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;script src="https://unpkg.com/leaflet/dist/leaflet.js"&gt;&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// 1. Création de la carte</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const map = L.map('map').setView([16.265, -61.551], 10);</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>attribution: '© OpenStreetMap'</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}).addTo(map);</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// 2. Liste de spots avec photos</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const spots = [</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>name: "Anse Pigeon / Malendure",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>coords: [16.167, -61.789],</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>desc: "Tortues, fonds peu profonds, accessible depuis la plage.",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>level: "Facile",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>image: "images/malendure.jpg"</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>name: "Réserve Cousteau - Îlets Pigeon",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>coords: [16.1675, -61.794],</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>desc: "Très beaux coraux et poissons tropicaux, accès en bateau.",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>level: "Intermédiaire",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>image: "images/ilets_pigeon.jpg"</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>name: "Plage de la Caravelle",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>coords: [16.217, -61.387],</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>desc: "Lagons calmes, idéal pour débutants et familles.",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>level: "Très facile",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>image: "images/caravelle.jpg"</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>];</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// 3. Ajout des marqueurs + popup avec photo</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>spots.forEach(spot =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const popupContent = `</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;b&gt;${spot.name}&lt;/b&gt;&lt;br&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>${spot.desc}&lt;br&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;i&gt;Niveau : ${spot.level}&lt;/i&gt;&lt;br&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;img src="${spot.image}" alt="${spot.name}" style="max-width:200px; margin-top:5px; display:block;"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>`;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>L.marker(spot.coords)</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.addTo(map)</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.bindPopup(popupContent);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
 </body>
 </html>
