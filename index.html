@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Snorkeling en Guadeloupe</title>
+  <title>Les meilleurs spots de Snorkeling en Guadeloupe</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
@@ -99,9 +99,9 @@
        4. Contrôle permettant de changer de fond de carte
     ----------------------------------------------------------- */
     const baseLayers = {
-      "Carte simple (OSM)": osm,
+      "Standard": osm,
       "Satellite": satellite,
-      "Relief avec villes": relief
+      "Relief": relief
     };
 
     L.control.layers(baseLayers, null, {
@@ -189,7 +189,7 @@
       },
       {
         name: "Malendure, Bouillante",
-        coords: [16.1725, -61.7769],       // identique à Malendure plage
+        coords: [16.1691, -61.7776],       // identique à Malendure plage
         desc: "Dortoir des tortues la nuit : anémones, tortues qui dorment etc.",
         rating: 5,
         image: "images/malendure_night.jpg"
