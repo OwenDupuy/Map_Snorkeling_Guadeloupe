@@ -42,17 +42,6 @@
       box-shadow: 0 0 8px rgba(0,0,0,0.4);
     }
 
-    .flipper-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      border: 2px solid white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 8px rgba(0,0,0,0.4);
-    }
-
     .rating-5 { background: #1a9850; }
     .rating-4 { background: #66bd63; }
     .rating-3 { background: #c8ffb5; }
@@ -386,16 +375,9 @@
       `;
 
       const icon = L.divIcon({
-      className: "",
-      html: `
-        <div class="flipper-icon rating-${spot.rating}">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
-            <path d="M12 2c-.5 0-.9.3-1 .8l-2 7.7-2.7 2.8c-.4.4-.4 1.1 0 1.5l3.6 3.6c.4.4 1.1.4 1.5 0l2.8-2.7 7.7-2c.5-.1.8-.6.8-1 0-.3-.1-.5-.3-.7L13.4 2.3c-.2-.2-.4-.3-.7-.3z"/>
-          </svg>
-        </div>
-      `,
-      iconSize: [32, 32],
-      iconAnchor: [16, 16]
+      className: `custom-marker rating-${spot.rating}`,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
     });
 
       // 👉 on crée le marker, avec un "title" = nom du spot (utilisé par le plugin de recherche)
