@@ -82,12 +82,15 @@
     }
 
   </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-search@4.0.0/dist/leaflet-search.min.css">
+
 </head>
 
 <body>
   <div id="map"></div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet-search@4.0.0/dist/leaflet-search.min.js"></script>
 
   <script>
     /* ----------------------------------------------------------
@@ -107,6 +110,17 @@
       maxBounds: guadeloupeBounds,
       maxBoundsViscosity: 1.0
     });
+
+    const map = L.map('map', {
+      center: [16.265, -61.551],
+      zoom: 10,
+      maxBounds: guadeloupeBounds,
+      maxBoundsViscosity: 1.0
+    });
+
+    // 👉 Nouveau : layer qui contiendra tous les markers
+    const markersLayer = L.layerGroup().addTo(map);
+
 
     /* ----------------------------------------------------------
        3. Tuiles (fonds de carte)
@@ -373,10 +387,21 @@
         iconAnchor: [12, 12]
       });
 
-      L.marker(spot.coords, { icon })
-        .addTo(map)
-        .bindPopup(popupContent);
-    });
+      const icon = L.divIcon({
+        className: `custom-marker rating-${spot.rating}`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
+      });
+
+      // 👉 on crée le marker, avec un "title" = nom du spot (utilisé par le plugin de recherche)
+      const marker = L.marker(spot.coords, {
+        icon,
+        title: spot.name
+      }).bindPopup(popupContent);
+
+      // 👉 on l’ajoute au layer de markers (et donc à la carte)
+      markersLayer.addLayer(marker);
+  });
 
     /* ----------------------------------------------------------
        8. Légende étoiles + couleurs
@@ -400,6 +425,29 @@
     };
 
     legend.addTo(map);
+
+    // ----------------------------------------------------------
+    // 9. Contrôle de recherche des spots
+    // ----------------------------------------------------------
+    const searchControl = new L.Control.Search({
+      layer: markersLayer,              // on cherche dans ce layer
+      propertyName: 'title',            // ce qu’on cherche = option "title" du marker
+      marker: false,                    // ne pas ajouter un marker rouge par défaut
+      initial: false,
+      zoom: 14,
+      textPlaceholder: 'Rechercher un spot...',
+      collapsed: false                  // si tu veux qu’il soit ouvert par défaut
+    });
+
+    // Quand un spot est trouvé, on ouvre sa popup
+    searchControl.on('search:locationfound', function (e) {
+      if (e.layer._popup) {
+        e.layer.openPopup();
+      }
+    });
+
+    map.addControl(searchControl);
+
   </script>
 </body>
 </html>
