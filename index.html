@@ -81,11 +81,36 @@
       color: #333;
     }
 
+    .filters-box {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: white;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 1.1em;
+      box-shadow: 0 0 10px rgba(0,0,0,0.25);
+      z-index: 9999;
+    }
+    .filters-box input {
+      margin-right: 5px;
+    }
+
+
   </style>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-search@4.0.0/dist/leaflet-search.min.css">
 
 </head>
 
+<div id="filters" class="filters-box">
+  <label><input type="checkbox" class="filter-rating" value="5" checked> ⭐⭐⭐⭐⭐</label><br>
+  <label><input type="checkbox" class="filter-rating" value="4" checked> ⭐⭐⭐⭐</label><br>
+  <label><input type="checkbox" class="filter-rating" value="3" checked> ⭐⭐⭐</label><br>
+  <label><input type="checkbox" class="filter-rating" value="2" checked> ⭐⭐</label><br>
+  <label><input type="checkbox" class="filter-rating" value="1" checked> ⭐</label>
+</div>
+
+  
 <body>
   <div id="map"></div>
 
@@ -346,7 +371,7 @@
     spots.forEach((spot, index) => {
 
       let imagesHtml = "";
-      if (spot.images && spot.images.length > 0) {
+        if (spot.images && spot.images.length > 0) {
         imagesHtml = `
           <div class="slider">
             <button type="button"
@@ -375,10 +400,10 @@
       `;
 
       const icon = L.divIcon({
-      className: `custom-marker rating-${spot.rating}`,
-      iconSize: [24, 24],
-      iconAnchor: [12, 12]
-    });
+        className: `custom-marker rating-${spot.rating}`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
+      });
 
       // 👉 on crée le marker, avec un "title" = nom du spot (utilisé par le plugin de recherche)
       const marker = L.marker(spot.coords, {
@@ -386,10 +411,13 @@
         title: spot.name
       }).bindPopup(popupContent);
 
+      // 👉 on garde les infos sur le marker pour les filtres plus tard
+      marker.rating = spot.rating;  // note associée au marker
+      spot._marker = marker;        // on stocke le marker dans l'objet spot
+
       // 👉 on l’ajoute au layer de markers (et donc à la carte)
       markersLayer.addLayer(marker);
-  });
-
+    });
     /* ----------------------------------------------------------
        8. Légende étoiles + couleurs
     ----------------------------------------------------------- */
@@ -434,6 +462,27 @@
     });
 
     map.addControl(searchControl);
+
+    // ----------------------------------------------------------
+    // 10. FILTRE PAR NOTE
+    // ----------------------------------------------------------
+    document.querySelectorAll(".filter-rating").forEach(cb => {
+      cb.addEventListener("change", () => {
+
+        // notes cochées → valeurs à garder
+        const activeRatings = [...document.querySelectorAll(".filter-rating:checked")]
+          .map(el => Number(el.value));
+
+        markersLayer.clearLayers();  // enlever tous les markers
+
+        spots.forEach((spot, index) => {
+          if (!activeRatings.includes(spot.rating)) return; // filtrage
+
+          const marker = spot._marker;  // on récupère le marker déjà créé
+          markersLayer.addLayer(marker);
+        });
+      });
+    });
 
   </script>
 </body>
