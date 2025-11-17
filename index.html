@@ -82,16 +82,15 @@
     }
 
     #filters-box {
-      position: fixed;
-      right: 20px;
-      top: 50%;
-      transform: translateY(-50%);
+      position: absolute;
+      left: 10px;
+      top: 70px;              /* ≈ sous la barre de recherche */
       background: white;
       padding: 10px 12px;
       border-radius: 12px;
       box-shadow: 0 0 12px rgba(0,0,0,0.3);
       font-size: 1.1em;
-      z-index: 9999;
+      z-index: 999;           /* au-dessus de la carte et des tuiles */
     }
 
     /* Bouton d’en-tête (ligne "Filtres ▾") */
