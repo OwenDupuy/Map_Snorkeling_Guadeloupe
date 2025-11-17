@@ -111,13 +111,6 @@
       maxBoundsViscosity: 1.0
     });
 
-    const map = L.map('map', {
-      center: [16.265, -61.551],
-      zoom: 10,
-      maxBounds: guadeloupeBounds,
-      maxBoundsViscosity: 1.0
-    });
-
     // 👉 Nouveau : layer qui contiendra tous les markers
     const markersLayer = L.layerGroup().addTo(map);
 
@@ -380,12 +373,6 @@
         Note : ${getStars(spot.rating)}<br><br>
         ${imagesHtml}
       `;
-
-      const icon = L.divIcon({
-        className: `custom-marker rating-${spot.rating}`,
-        iconSize: [24, 24],
-        iconAnchor: [12, 12]
-      });
 
       const icon = L.divIcon({
         className: `custom-marker rating-${spot.rating}`,
