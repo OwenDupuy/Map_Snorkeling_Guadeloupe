@@ -804,16 +804,39 @@
 
       const imgs = spots[i].images;
       if (!imgs || imgs.length <= 1) return; // pas de slider si 0 ou 1 image
+        if (sliderIntervals[i]) {
+          clearInterval(sliderIntervals[i]);
+        }
+        sliderIntervals[i] = setInterval(() => {
+          changeImage(i, 1);
+        }, 10000);
+      }
+      // 3) Recentrer la carte sur la popup avec un décalage vers le haut
+      //    et adapter un peu le zoom (surtout pratique sur mobile)
+      const isMobile = window.innerWidth <= 768;
 
-      if (sliderIntervals[i]) {
-        clearInterval(sliderIntervals[i]);
+      // Position actuelle du marker en pixels
+      let p = map.project(marker.getLatLng());
+
+      // Décalage vers le haut (en pixels d'écran)
+      p.y -= isMobile ? 160 : 120; // un peu plus de décalage sur mobile
+
+      const newLatLng = map.unproject(p);
+
+      // Zoom cible : un peu plus proche sur mobile, sinon on garde au moins 12
+      let targetZoom = map.getZoom();
+      if (isMobile) {
+        targetZoom = Math.max(targetZoom, 14);
+      } else {
+        targetZoom = Math.max(targetZoom, 12);
       }
 
-      sliderIntervals[i] = setInterval(() => {
-        changeImage(i, 1);
-      }, 10000);
+      map.flyTo(newLatLng, targetZoom, {
+        animate: true,
+        duration: 0.6
+      });
     });
-
+    
     map.on('popupclose', function (e) {
       // 1) on ré-affiche filtres / légende / contrôles
       document.body.classList.remove('popup-open');
