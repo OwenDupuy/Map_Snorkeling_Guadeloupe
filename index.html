@@ -461,30 +461,39 @@
         (currentImageIndex[spotIndex] + direction + n) % n;
 
       const imgEl = document.getElementById(`slider-img-${spotIndex}`);
+      const linkEl = document.getElementById(`slider-link-${spotIndex}`);
       const counterEl = document.getElementById(`slider-counter-${spotIndex}`);
 
       if (imgEl) {
         imgEl.src = imgs[currentImageIndex[spotIndex]];
+      }
+      if (linkEl) {
+        // lien vers l'image courante en grand (nouvel onglet)
+        linkEl.href = imgs[currentImageIndex[spotIndex]];
       }
       if (counterEl) {
         counterEl.textContent = `${currentImageIndex[spotIndex] + 1} / ${n}`;
       }
     }
 
-    
+
     spots.forEach((spot, index) => {
 
       let imagesHtml = "";
-        if (spot.images && spot.images.length > 0) {
+      if (spot.images && spot.images.length > 0) {
         imagesHtml = `
           <div class="slider">
             <button type="button"
                     class="slider-btn"
                     onclick="changeImage(${index}, -1)">‹</button>
-            <img id="slider-img-${index}"
-                  src="${spot.images[0]}"
-                  alt="${spot.name}"
-                  style="max-width:180px; border-radius:8px; display:block;">
+            <a href="${spot.images[0]}"
+               target="_blank"
+               id="slider-link-${index}">
+              <img id="slider-img-${index}"
+                    src="${spot.images[0]}"
+                    alt="${spot.name}"
+                    style="max-width:180px; border-radius:8px; display:block;">
+            </a>
             <button type="button"
                     class="slider-btn"
                     onclick="changeImage(${index}, 1)">›</button>
@@ -495,6 +504,8 @@
           </div>
         `;
       }
+      // ... la suite de ta boucle (popupContent, icon, marker, etc.)
+
 
       const popupContent = `
         <b>${spot.name}</b><br>
