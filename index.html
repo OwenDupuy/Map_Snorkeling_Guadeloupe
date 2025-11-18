@@ -620,7 +620,7 @@
       {
         name: "Anse à sable, Bouillante",
         coords: [16.1453, -61.7789],      
-        desc: "",
+        desc: "Un spot sympathique situé non loin de la réserve Cousteau. Pour profiter pleinement de la biodiversité, il faut savoir descendre un peu en apnée ou longer la côte, où l’on découvre de jolies zones rocheuses et quelques espèces intéressantes. L’ensemble reste globalement joli et agréable, idéal pour une petite exploration tranquille.",
         rating: 3,
         species: [],
         images: []
@@ -628,7 +628,7 @@
       {
         name: "Pointe de l'Ermitage, Bouillante",
         coords: [16.1260, -61.7752],      
-        desc: "",
+        desc: "Le snorkeling y est intéressant, mais la houle peut rapidement pousser vers les rochers, rendant la zone potentiellement dangereuse. Ce n’est pas le meilleur spot de l’île, mais il reste agréable et facilement accessible en bateau. À privilégier par mer calme et avec une bonne vigilance.",
         rating: 2,
         species: [],
         images: []
@@ -823,7 +823,7 @@
       let p = map.project(marker.getLatLng(), targetZoom);
 
       // c) on applique un décalage vertical constant (en pixels d’écran)
-      const offset = isMobile ? 160 : 160;  // ↑ augmente la valeur pour remonter la popup
+      const offset = isMobile ? 180 : 180;  // ↑ augmente la valeur pour remonter la popup
       p.y -= offset;
 
       // d) nouvelle latitude/longitude correspondant à cette position
