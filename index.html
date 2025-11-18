@@ -807,10 +807,12 @@
         if (sliderIntervals[i]) {
           clearInterval(sliderIntervals[i]);
         }
+      
         sliderIntervals[i] = setInterval(() => {
           changeImage(i, 1);
         }, 10000);
       }
+           
       // 3) Recentrer la carte sur la popup avec un décalage vers le haut
       //    et adapter un peu le zoom (surtout pratique sur mobile)
       const isMobile = window.innerWidth <= 768;
