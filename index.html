@@ -803,7 +803,7 @@
       const i = marker.spotIndex;
 
       const imgs = spots[i].images;
-      if (!imgs || imgs.length <= 1) return; // pas de slider si 0 ou 1 image
+      if (imgs && imgs.length > 1) {
         if (sliderIntervals[i]) {
           clearInterval(sliderIntervals[i]);
         }
