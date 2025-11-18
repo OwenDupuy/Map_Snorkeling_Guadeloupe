@@ -167,6 +167,72 @@
       margin-bottom: 6px;
     }
 
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+
+    .lightbox.hidden {
+      display: none;
+    }
+
+    .lightbox-inner {
+      position: relative;
+      max-width: 90vw;
+      max-height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #lightbox-img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.6);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: -40px;
+      right: 0;
+      border: none;
+      background: transparent;
+      color: white;
+      font-size: 26px;
+      cursor: pointer;
+    }
+
+    .lightbox-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      font-size: 32px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox-arrow.left {
+      left: -50px;
+    }
+
+    .lightbox-arrow.right {
+      right: -50px;
+    }
+
   </style>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-search@4.0.0/dist/leaflet-search.min.css">
 
@@ -195,6 +261,18 @@
 
   </div>
   <div id="map"></div>
+
+  <div id="lightbox" class="lightbox hidden">
+    <div class="lightbox-inner">
+      <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+
+      <button class="lightbox-arrow left" onclick="changeLightboxImage(-1)">‹</button>
+
+      <img id="lightbox-img" src="" alt="Photo spot">
+
+      <button class="lightbox-arrow right" onclick="changeLightboxImage(1)">›</button>
+    </div>
+  </div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/leaflet-search@4.0.0/dist/leaflet-search.min.js"></script>
@@ -465,64 +543,83 @@
     const currentImageIndex = spots.map(() => 0);
 
     const sliderIntervals = {}; // pour mémoriser les setInterval par spot
-
-    // Fonction appelée par les boutons ‹ et ›
+    let lightboxSpotIndex = null;
+    
+    // Fonction appelée par les boutons ‹ et › dans la popup
     function changeImage(spotIndex, direction) {
       const imgs = spots[spotIndex].images;
       if (!imgs || imgs.length === 0) return;
 
       const n = imgs.length;
-      // on avance ou recule dans le tableau, en bouclant
       currentImageIndex[spotIndex] =
         (currentImageIndex[spotIndex] + direction + n) % n;
 
       const imgEl = document.getElementById(`slider-img-${spotIndex}`);
-      const linkEl = document.getElementById(`slider-link-${spotIndex}`);
       const counterEl = document.getElementById(`slider-counter-${spotIndex}`);
 
       if (imgEl) {
         imgEl.src = imgs[currentImageIndex[spotIndex]];
       }
-      if (linkEl) {
-        // lien vers l'image courante en grand (nouvel onglet)
-        linkEl.href = imgs[currentImageIndex[spotIndex]];
-      }
       if (counterEl) {
         counterEl.textContent = `${currentImageIndex[spotIndex] + 1} / ${n}`;
       }
+
+      // si la lightbox est ouverte sur ce spot, on met aussi à jour la grande image
+      if (lightboxSpotIndex === spotIndex) {
+        const bigImg = document.getElementById('lightbox-img');
+        if (bigImg) {
+          bigImg.src = imgs[currentImageIndex[spotIndex]];
+        }
+      }
     }
 
+    function openLightbox(spotIndex) {
+      const imgs = spots[spotIndex].images;
+      if (!imgs || imgs.length === 0) return;
+
+      lightboxSpotIndex = spotIndex;
+
+      const bigImg = document.getElementById('lightbox-img');
+      bigImg.src = imgs[currentImageIndex[spotIndex]];
+
+      document.getElementById('lightbox').classList.remove('hidden');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.add('hidden');
+      lightboxSpotIndex = null;
+    }
+
+    function changeLightboxImage(direction) {
+      if (lightboxSpotIndex === null) return;
+      changeImage(lightboxSpotIndex, direction);  // réutilise la logique existante
+    }
 
     spots.forEach((spot, index) => {
 
       let imagesHtml = "";
       if (spot.images && spot.images.length > 0) {
-        imagesHtml = `
-          <div class="slider">
-            <button type="button"
-                    class="slider-btn"
-                    onclick="changeImage(${index}, -1)">‹</button>
-            <a href="${spot.images[0]}"
-               target="_blank"
-               id="slider-link-${index}">
-              <div class="slider-img-wrapper">
-                <img id="slider-img-${index}"
-                      src="${spot.images[0]}"
-                      alt="${spot.name}">
-              </div>
-            </a>
-            <button type="button"
-                    class="slider-btn"
-                    onclick="changeImage(${index}, 1)">›</button>
+      imagesHtml = `
+        <div class="slider">
+          <button type="button"
+                  class="slider-btn"
+                  onclick="changeImage(${index}, -1)">‹</button>
+          <div class="slider-img-wrapper"
+               onclick="openLightbox(${index})">
+            <img id="slider-img-${index}"
+                  src="${spot.images[0]}"
+                  alt="${spot.name}">
           </div>
-          <div class="slider-counter"
-                id="slider-counter-${index}">
-                1 / ${spot.images.length}
-          </div>
-        `;
-      }
-      // ... la suite de ta boucle (popupContent, icon, marker, etc.)
-
+          <button type="button"
+                  class="slider-btn"
+                  onclick="changeImage(${index}, 1)">›</button>
+        </div>
+        <div class="slider-counter"
+              id="slider-counter-${index}">
+              1 / ${spot.images.length}
+        </div>
+      `;
+    }
 
       const popupContent = `
         <b>${spot.name}</b><br>
