@@ -448,6 +448,8 @@
     // Index courant de l'image pour chaque spot
     const currentImageIndex = spots.map(() => 0);
 
+    const sliderIntervals = {}; // pour mémoriser les setInterval par spot
+
     // Fonction appelée par les boutons ‹ et ›
     function changeImage(spotIndex, direction) {
       const imgs = spots[spotIndex].images;
@@ -516,6 +518,7 @@
       // 👉 on garde les infos sur le marker pour les filtres plus tard
       marker.rating = spot.rating;  // note associée au marker
       spot._marker = marker;        // on stocke le marker dans l'objet spot
+      marker.spotIndex = index;
 
       // 👉 on l’ajoute au layer de markers (et donc à la carte)
       markersLayer.addLayer(marker);
@@ -564,6 +567,36 @@
     });
 
     map.addControl(searchControl);
+
+    // --- Auto-défilement des images dans la popup ---
+    map.on('popupopen', function (e) {
+      const marker = e.popup._source;
+      const i = marker.spotIndex;
+
+      const imgs = spots[i].images;
+      if (!imgs || imgs.length <= 1) return; // pas de slider si 0 ou 1 image
+
+      // on nettoie un éventuel ancien intervalle
+      if (sliderIntervals[i]) {
+        clearInterval(sliderIntervals[i]);
+      }
+
+      // toutes les 3 secondes, on passe à l'image suivante
+      sliderIntervals[i] = setInterval(() => {
+        changeImage(i, 1);
+      }, 3000);
+    });
+
+    map.on('popupclose', function (e) {
+      const marker = e.popup._source;
+      const i = marker.spotIndex;
+
+      if (sliderIntervals[i]) {
+        clearInterval(sliderIntervals[i]);
+        delete sliderIntervals[i];
+      }
+    });
+
 
     // --- Ouverture / fermeture du bloc filtres ---
     const filtersToggle = document.getElementById('filters-toggle');
