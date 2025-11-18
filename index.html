@@ -793,48 +793,43 @@
 
     map.addControl(searchControl);
 
-  // --- Auto-défilement des images dans la popup + gestion de l'UI ---
+  // --- Auto-défilement des images + gestion UI + recentrage fixe ---
     map.on('popupopen', function (e) {
-      // 1) on cache les filtres / légende / contrôles
+      // 1) cacher filtres / légende / contrôles
       document.body.classList.add('popup-open');
 
-      // 2) on gère le slider auto
       const marker = e.popup._source;
       const i = marker.spotIndex;
 
+      // 2) Slider auto
       const imgs = spots[i].images;
       if (imgs && imgs.length > 1) {
         if (sliderIntervals[i]) {
           clearInterval(sliderIntervals[i]);
         }
-      
         sliderIntervals[i] = setInterval(() => {
           changeImage(i, 1);
-        }, 10000);
+        }, 10000); // 10 s
       }
-           
-      // --------------------------------------------------
-      // 3) Zoom FIXE AVANT de déplacer la carte
-      // --------------------------------------------------
-      const targetZoom = isMobile ? 13 : 11;
 
-      // On applique le zoom immédiatement (sans déplacement)
+      // 3) Zoom fixe + décalage fixe
+      const isMobile = window.innerWidth <= 768;
+
+      // a) on force d’abord un zoom EXACT, identique pour tous
+      const targetZoom = isMobile ? 13 : 11;
       map.setView(marker.getLatLng(), targetZoom, { animate: false });
 
-      // --------------------------------------------------
-      // 4) Maintenant on peut appliquer le décalage pixel FIXE
-      // --------------------------------------------------
+      // b) on calcule la position en pixels à CE zoom
       let p = map.project(marker.getLatLng(), targetZoom);
 
-      // Décalage vertical constant
-      const offset = isMobile ? 140 : 100;   // Ajuste ici si tu veux ↓↑
+      // c) on applique un décalage vertical constant (en pixels d’écran)
+      const offset = isMobile ? 140 : 100;  // ↑ augmente la valeur pour remonter la popup
       p.y -= offset;
 
+      // d) nouvelle latitude/longitude correspondant à cette position
       const finalLatLng = map.unproject(p, targetZoom);
 
-      // --------------------------------------------------
-      // 5) FlyTo vers la position finale (avec animation)
-      // --------------------------------------------------
+      // e) et on anime pour aller à cet endroit
       map.flyTo(finalLatLng, targetZoom, {
         animate: true,
         duration: 0.6
