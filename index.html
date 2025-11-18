@@ -34,6 +34,7 @@
       border-radius: 50%;
       margin-right: 10px;
       display: inline-block;
+      z-index: 350;
     }
 
     /* --- Marqueurs personnalisés colorés --- */
@@ -107,7 +108,7 @@
       border-radius: 12px;
       box-shadow: 0 0 12px rgba(0,0,0,0.3);
       font-size: 1.1em;
-      z-index: 999;           /* au-dessus de la carte et des tuiles */
+      z-index: 350;           /* au-dessus de la carte et des tuiles */
     }
 
     /* Bouton d’en-tête (ligne "Filtres ▾") */
@@ -233,17 +234,12 @@
     .lightbox-arrow.right {
       right: -50px;
     }
-
-    /* Forcer les popups Leaflet AU PREMIER PLAN (PC + mobile) */
-    .leaflet-popup-pane,
-    .leaflet-popup,
-    .leaflet-popup-content-wrapper,
-    .leaflet-container .leaflet-popup {
-      z-index: 100000 !important;
-      position: relative;
+    /* Mettre tous les contrôles Leaflet derrière les popups */
+    .leaflet-top,
+    .leaflet-bottom {
+      z-index: 400;  /* Popups sont à 700 par défaut → donc devant */
     }
-
-
+    
     @media (max-width: 768px) {
 
       /* Lightbox plus adaptée au téléphone */
