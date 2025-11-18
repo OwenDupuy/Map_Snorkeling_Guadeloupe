@@ -813,21 +813,29 @@
         }, 10000);
       }
            
-      // 3) Recentrer la carte sur la popup avec un décalage vers le haut
-      //    et adapter un peu le zoom (surtout pratique sur mobile)
-      const isMobile = window.innerWidth <= 768;
-
-      // Position actuelle du marker en pixels
-      let p = map.project(marker.getLatLng());
-
-      // Décalage vers le haut (en pixels d'écran)
-      p.y -= isMobile ? 90 : 60; // un peu plus de décalage sur mobile
-
-      const newLatLng = map.unproject(p);
-
+      // --------------------------------------------------
+      // 3) Zoom FIXE AVANT de déplacer la carte
+      // --------------------------------------------------
       const targetZoom = isMobile ? 13 : 11;
 
-      map.flyTo(newLatLng, targetZoom, {
+      // On applique le zoom immédiatement (sans déplacement)
+      map.setView(marker.getLatLng(), targetZoom, { animate: false });
+
+      // --------------------------------------------------
+      // 4) Maintenant on peut appliquer le décalage pixel FIXE
+      // --------------------------------------------------
+      let p = map.project(marker.getLatLng(), targetZoom);
+
+      // Décalage vertical constant
+      const offset = isMobile ? 140 : 100;   // Ajuste ici si tu veux ↓↑
+      p.y -= offset;
+
+      const finalLatLng = map.unproject(p, targetZoom);
+
+      // --------------------------------------------------
+      // 5) FlyTo vers la position finale (avec animation)
+      // --------------------------------------------------
+      map.flyTo(finalLatLng, targetZoom, {
         animate: true,
         duration: 0.6
       });
