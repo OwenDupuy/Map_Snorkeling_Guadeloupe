@@ -821,16 +821,16 @@
       let p = map.project(marker.getLatLng());
 
       // Décalage vers le haut (en pixels d'écran)
-      p.y -= isMobile ? 160 : 120; // un peu plus de décalage sur mobile
+      p.y -= isMobile ? 90 : 60; // un peu plus de décalage sur mobile
 
       const newLatLng = map.unproject(p);
 
       // Zoom cible : un peu plus proche sur mobile, sinon on garde au moins 12
       let targetZoom = map.getZoom();
       if (isMobile) {
-        targetZoom = Math.max(targetZoom, 14);
-      } else {
         targetZoom = Math.max(targetZoom, 12);
+      } else {
+        targetZoom = Math.max(targetZoom, 10);
       }
 
       map.flyTo(newLatLng, targetZoom, {
