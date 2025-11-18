@@ -234,6 +234,16 @@
       right: -50px;
     }
 
+    /* Forcer les popups Leaflet AU PREMIER PLAN (PC + mobile) */
+    .leaflet-popup-pane,
+    .leaflet-popup,
+    .leaflet-popup-content-wrapper,
+    .leaflet-container .leaflet-popup {
+      z-index: 100000 !important;
+      position: relative;
+    }
+
+
     @media (max-width: 768px) {
 
       /* Lightbox plus adaptée au téléphone */
