@@ -81,6 +81,22 @@
       color: #333;
     }
 
+    .slider-img-wrapper {
+      width: 180px;        /* largeur fixe de la zone image */
+      height: 130px;       /* hauteur fixe => le texte ne bouge plus */
+      overflow: hidden;    /* on coupe ce qui dépasse */
+      border-radius: 8px;
+      display: flex;
+      align-items: center; /* centre l’image verticalement */
+      justify-content: center; /* centre horizontalement */
+    }
+
+    .slider-img-wrapper img {
+      max-width: 100%;
+      max-height: 100%;
+      display: block;
+    }
+
     #filters-box {
       position: absolute;
       left: 20px;
@@ -489,10 +505,11 @@
             <a href="${spot.images[0]}"
                target="_blank"
                id="slider-link-${index}">
-              <img id="slider-img-${index}"
-                    src="${spot.images[0]}"
-                    alt="${spot.name}"
-                    style="max-width:180px; border-radius:8px; display:block;">
+              <div class="slider-img-wrapper">
+                <img id="slider-img-${index}"
+                      src="${spot.images[0]}"
+                      alt="${spot.name}">
+              </div>
             </a>
             <button type="button"
                     class="slider-btn"
@@ -595,7 +612,7 @@
       // toutes les 3 secondes, on passe à l'image suivante
       sliderIntervals[i] = setInterval(() => {
         changeImage(i, 1);
-      }, 3000);
+      }, 5000);
     });
 
     map.on('popupclose', function (e) {
