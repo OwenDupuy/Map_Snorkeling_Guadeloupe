@@ -816,14 +816,14 @@
       const isMobile = window.innerWidth <= 768;
 
       // a) on force d’abord un zoom EXACT, identique pour tous
-      const targetZoom = isMobile ? 13 : 11;
+      const targetZoom = isMobile ? 13 : 13;
       map.setView(marker.getLatLng(), targetZoom, { animate: false });
 
       // b) on calcule la position en pixels à CE zoom
       let p = map.project(marker.getLatLng(), targetZoom);
 
       // c) on applique un décalage vertical constant (en pixels d’écran)
-      const offset = isMobile ? 140 : 100;  // ↑ augmente la valeur pour remonter la popup
+      const offset = isMobile ? 160 : 160;  // ↑ augmente la valeur pour remonter la popup
       p.y -= offset;
 
       // d) nouvelle latitude/longitude correspondant à cette position
