@@ -825,13 +825,7 @@
 
       const newLatLng = map.unproject(p);
 
-      // Zoom cible : un peu plus proche sur mobile, sinon on garde au moins 12
-      let targetZoom = map.getZoom();
-      if (isMobile) {
-        targetZoom = Math.max(targetZoom, 12);
-      } else {
-        targetZoom = Math.max(targetZoom, 10);
-      }
+      const targetZoom = isMobile ? 13 : 11;
 
       map.flyTo(newLatLng, targetZoom, {
         animate: true,
