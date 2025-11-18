@@ -34,7 +34,6 @@
       border-radius: 50%;
       margin-right: 10px;
       display: inline-block;
-      z-index: 350;
     }
 
     /* --- Marqueurs personnalisés colorés --- */
@@ -108,7 +107,7 @@
       border-radius: 12px;
       box-shadow: 0 0 12px rgba(0,0,0,0.3);
       font-size: 1.1em;
-      z-index: 350;           /* au-dessus de la carte et des tuiles */
+      z-index: 999;           /* au-dessus de la carte et des tuiles */
     }
 
     /* Bouton d’en-tête (ligne "Filtres ▾") */
@@ -234,12 +233,17 @@
     .lightbox-arrow.right {
       right: -50px;
     }
-    /* Mettre tous les contrôles Leaflet derrière les popups */
-    .leaflet-top,
-    .leaflet-bottom {
-      z-index: 400;  /* Popups sont à 700 par défaut → donc devant */
+
+    /* Quand une popup est ouverte, on masque les UI par-dessus */
+    body.popup-open #filters-box,
+    body.popup-open .legend,
+    body.popup-open .leaflet-control-layers,
+    body.popup-open .leaflet-control-zoom,
+    body.popup-open .leaflet-control-search {
+      opacity: 0;
+      pointer-events: none;
     }
-    
+
     @media (max-width: 768px) {
 
       /* Lightbox plus adaptée au téléphone */
@@ -778,26 +782,32 @@
 
     map.addControl(searchControl);
 
-    // --- Auto-défilement des images dans la popup ---
+  // --- Auto-défilement des images dans la popup + gestion de l'UI ---
     map.on('popupopen', function (e) {
+      // 1) on cache les filtres / légende / contrôles
+      document.body.classList.add('popup-open');
+
+      // 2) on gère le slider auto
       const marker = e.popup._source;
       const i = marker.spotIndex;
 
       const imgs = spots[i].images;
       if (!imgs || imgs.length <= 1) return; // pas de slider si 0 ou 1 image
 
-      // on nettoie un éventuel ancien intervalle
       if (sliderIntervals[i]) {
         clearInterval(sliderIntervals[i]);
       }
 
-      // toutes les 3 secondes, on passe à l'image suivante
       sliderIntervals[i] = setInterval(() => {
         changeImage(i, 1);
       }, 10000);
     });
 
     map.on('popupclose', function (e) {
+      // 1) on ré-affiche filtres / légende / contrôles
+      document.body.classList.remove('popup-open');
+
+      // 2) on coupe le slider auto
       const marker = e.popup._source;
       const i = marker.spotIndex;
 
