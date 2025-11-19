@@ -100,8 +100,11 @@
 
     #filters-box {
       position: absolute;
-      left: 20px;
-      top: 225px;              /* ≈ sous la barre de recherche */
+      left: 10px;
+      top: 70px;              /* ≈ sous la barre de recherche */
+      right: auto;
+      bottom: auto;
+      transform: none;
       background: white;
       padding: 10px 12px;
       border-radius: 12px;
@@ -430,21 +433,33 @@
     </button>
 
     <div id="filters-content" class="hidden">
-      <div id="menu-search-container"></div>  <!-- emplacement pour la barre de recherche -->
+      <!-- 1. Fonds de carte -->
+      <div id="menu-baselayers"></div>
       <hr>
-      <div id="menu-baselayers"></div>        <!-- emplacement fonds de carte -->
+
+      <!-- 2. Barre de recherche -->
+      <div id="menu-search-container"></div>
       <hr>
+
+      <!-- 3. Filtres par note -->
       <label><input type="checkbox" data-rating="5" checked> 5 ★ Excellent</label>
       <label><input type="checkbox" data-rating="4" checked> 4 ★ Très bien</label>
       <label><input type="checkbox" data-rating="3" checked> 3 ★ Bien</label>
       <label><input type="checkbox" data-rating="2" checked> 2 ★ Neutre</label>
       <label><input type="checkbox" data-rating="1" checked> 1 ★ Mauvais</label>
+
       <hr style="margin:8px 0;">
+
+      <!-- 3b. Filtres espèces -->
       <label><input type="checkbox" data-species="tortue"> Tortues 🐢</label>
       <label><input type="checkbox" data-species="requin"> Requins 🦈</label>
+
       <hr>
+
+      <!-- 4. Changer de langue -->
       <button onclick="openLanguageModal()" class="lang-button">🌐 Changer de langue</button>
-    </div>
+</div>
+
 
   </div>
   <div id="map"></div>
@@ -479,7 +494,7 @@
   <script>
 
     // === Choix de langue & textes FR/EN ===
-    let currentLang = 'fr';
+    let currentLang = 'en';
 
     const i18n = {
       fr: {
