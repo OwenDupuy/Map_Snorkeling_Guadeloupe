@@ -432,12 +432,16 @@
         overflow-y: auto;         /* Ajoute un scroll interne si besoin */
         font-size: 1.2em;         /* Légère réduction du texte */
         padding: 4px 6px !important;  /* Marges internes un peu plus larges mais compactes */
+        width: auto !important;        /* laisse Leaflet adapter la largeur */
+        max-width: 80vw !important;    /* ne dépasse jamais 80% de la largeur écran */
+        overflow-wrap: break-word;
       }
     
       /* Wrapper interne de la popup */
       .leaflet-popup-content-wrapper {
         padding: 10px 12px !important; /* un peu plus de marge mais compact */
         border-radius: 12px !important;
+        max-width: 85vw !important;
       }
     
       /* Bulle globale : on ne change PAS la largeur */
