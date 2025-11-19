@@ -101,14 +101,13 @@
     #filters-box {
       position: absolute;
       left: 20px;
-      top: 100px;              /* ≈ sous la barre de recherche */
+      top: 160px;              /* ≈ sous la barre de recherche */
       right: auto;
       bottom: auto;
       transform: none;
       background: white;
       padding: 10px 12px;
       border-radius: 12px;
-      min-width: 260px;
       box-shadow: 0 0 12px rgba(0,0,0,0.3);
       font-size: 1.1em;
       z-index: 999;           /* au-dessus de la carte et des tuiles */
@@ -419,38 +418,6 @@
       }
     }
 
-    /* Contrôles Leaflet intégrés dans le menu :
-   on enlève les floats et on les force en bloc */
-    #menu-baselayers .leaflet-control,
-    #menu-baselayers .leaflet-control-layers,
-    #menu-search-container .leaflet-control,
-    #menu-search-container .leaflet-control-search {
-      float: none;
-      clear: both;
-      display: block;
-      margin: 4px 0;
-    }
-    
-    /* On enlève la boîte indépendante et l’ombre portée */
-    #menu-baselayers .leaflet-control-layers,
-    #menu-search-container .leaflet-control-search {
-      box-shadow: none;
-      background: transparent;
-      border-radius: 0;
-      padding: 0;
-    }
-
-    /* On élargit le champ de recherche à 100 % du menu */
-    #menu-search-container .leaflet-control-search .search-input {
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    /* Masquer le bouton loupe du plugin Leaflet-Search */
-    #menu-search-container .leaflet-search-button {
-      display: none !important;
-    }
-
   </style>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-search@4.0.0/dist/leaflet-search.min.css">
 
@@ -469,10 +436,6 @@
       <div id="menu-baselayers"></div>
       <hr style="margin:8px 0;">
 
-      <!-- 2. Barre de recherche -->
-      <div id="menu-search-container"></div>
-      <hr>
-
       <!-- 3. Filtres par note -->
       <label><input type="checkbox" data-rating="5" checked> 5 ★ Excellent</label>
       <label><input type="checkbox" data-rating="4" checked> 4 ★ Très bien</label>
@@ -480,11 +443,7 @@
       <label><input type="checkbox" data-rating="2" checked> 2 ★ Neutre</label>
       <label><input type="checkbox" data-rating="1" checked> 1 ★ Mauvais</label>
 
-      <hr>
-      
       <hr style="margin:8px 0;">
-
-      <hr>
 
       <!-- 3b. Filtres espèces -->
       <label><input type="checkbox" data-species="tortue"> Tortues 🐢</label>
@@ -1242,7 +1201,8 @@
       initial: false,
       zoom: 14,
       textPlaceholder: 'Rechercher un spot...',
-      collapsed: false
+      collapsed: false,
+      position: 'topleft'
     });
 
     searchControl.on('search:locationfound', function (e) {
@@ -1253,10 +1213,6 @@
 
     // On l’ajoute à la carte…
     map.addControl(searchControl);
-
-    // …puis on déplace son container dans le menu
-    const searchContainer = searchControl.getContainer();
-    document.getElementById('menu-search-container').appendChild(searchContainer);
 
     applyLanguage();
 
