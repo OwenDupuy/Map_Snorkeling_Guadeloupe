@@ -955,8 +955,6 @@
       }
     ];
 
-    ];
-
     /* ----------------------------------------------------------
        7. Marqueurs colorés + popup avec photo
     ----------------------------------------------------------- */
@@ -1176,14 +1174,14 @@
     // ----------------------------------------------------------
     // 9. Contrôle de recherche des spots
     // ----------------------------------------------------------
-    const searchControl = new L.Control.Search({
-      layer: markersLayer,              // on cherche dans ce layer
-      propertyName: 'title',            // ce qu’on cherche = option "title" du marker
-      marker: false,                    // ne pas ajouter un marker rouge par défaut
+    searchControl = new L.Control.Search({
+      layer: markersLayer,
+      propertyName: 'title',
+      marker: false,
       initial: false,
       zoom: 14,
       textPlaceholder: 'Rechercher un spot...',
-      collapsed: false                  // si tu veux qu’il soit ouvert par défaut
+      collapsed: false
     });
 
     // Quand un spot est trouvé, on ouvre sa popup
