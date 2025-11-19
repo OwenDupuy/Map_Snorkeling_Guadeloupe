@@ -375,12 +375,54 @@
       color: #555;
     }
 
+    .popup-comments {
+      margin-top: 10px;
+    }
+
+    /* La petite barre cliquable "Ajouter un commentaire" */
+    .comments-toggle {
+      width: 100%;
+      border: none;
+      background: #f0f0f0;
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 0.9em;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .comments-toggle:hover {
+      background: #e0e0e0;
+    }
+
+    /* Le bloc qui contient réellement Disqus */
+    .comments-panel {
+      margin-top: 6px;
+      max-height: 260px;
+      overflow-y: auto;
+      border-top: 1px solid rgba(0,0,0,0.1);
+      padding-top: 6px;
+    }
+
+    .comments-panel.hidden {
+      display: none;
+    }
+
+    .popup-comments .comments-hint {
+      font-size: 0.85em;
+      margin-bottom: 4px;
+      color: #555;
+    }
 
     @media (max-width: 768px) {
 
       /* 1. Cacher le zoom sur mobile */
       .leaflet-control-zoom {
         display: none !important;
+      }
+
+      .comments-panel {
+        max-height: 200px;
       }
 
       .popup-comments {
@@ -647,7 +689,9 @@
           relief: "Relief / Topographie"
         },
         changeLanguage: "Changer de langue",
-        commentsTitle: "💬 Commentaires sur ce spot :"
+        commentsTitle: "💬 Commentaires sur ce spot :",
+        commentsToggleClosed: "💬 Ajouter un commentaire",
+        commentsToggleOpen: "✕ Masquer les commentaires"
       },
       en: {
         legendTitle: "Spot quality",
@@ -670,7 +714,9 @@
           relief: "Relief / Topographic"
         },
         changeLanguage: "Change language",
-        commentsTitle: "💬 Comments on this spot:"
+        commentsTitle: "💬 Comments on this spot:",
+        commentsToggleClosed: "💬 Add a comment",
+        commentsToggleOpen: "✕ Hide comments"
       }
     };
 
@@ -1236,8 +1282,15 @@
           Note : ${getStars(spot.rating)}<br><br>
           ${generateImagesHtml(spot, index)}
           <div class="popup-comments" id="comments-container-${index}">
-            <div class="comments-hint">
-              ${t.commentsTitle}
+            <button type="button"
+                    class="comments-toggle"
+                    data-spot-index="${index}">
+              ${t.commentsToggleClosed}
+            </button>
+            <div class="comments-panel hidden">
+              <div class="comments-hint">
+                ${t.commentsTitle}
+              </div>
             </div>
           </div>
         `;
@@ -1348,10 +1401,17 @@
         Note : ${getStars(spot.rating)}<br><br>
         ${generateImagesHtml(spot, index)}
         <div class="popup-comments" id="comments-container-${index}">
-          <div class="comments-hint">
-            ${t.commentsTitle}
+          <button type="button"
+                  class="comments-toggle"
+                  data-spot-index="${index}">
+            ${t.commentsToggleClosed}
+          </button>
+          <div class="comments-panel hidden">
+            <div class="comments-hint">
+              ${t.commentsTitle}
+            </div>
+            <!-- Disqus sera déplacé ici -->
           </div>
-          <!-- Disqus sera déplacé ici au moment d'ouvrir la popup -->
         </div>
       `;
 
@@ -1446,15 +1506,31 @@
         animate: true,
         duration: 0.6
       });
-      // --- 💬 Gestion des commentaires Disqus ---
+      // --- 💬 Gestion du bouton et de Disqus ---
       const popupEl = e.popup.getElement();
-      const commentsContainer = popupEl.querySelector(`#comments-container-${i}`);
+      const t = i18n[currentLang];
+    
+      const toggleBtn = popupEl.querySelector('.comments-toggle');
+      const commentsPanel = popupEl.querySelector('.comments-panel');
       const disqusThread = document.getElementById('disqus_thread');
-
-      if (commentsContainer && disqusThread) {
-        commentsContainer.appendChild(disqusThread);  // on déplace Disqus dans la popup
+    
+      if (toggleBtn && commentsPanel) {
+        // fermé par défaut
+        commentsPanel.classList.add('hidden');
+        toggleBtn.textContent = t.commentsToggleClosed;
+    
+        toggleBtn.onclick = () => {
+          const isHidden = commentsPanel.classList.toggle('hidden');
+          toggleBtn.textContent = isHidden
+            ? t.commentsToggleClosed
+            : t.commentsToggleOpen;
+        };
+      }
+    
+      if (commentsPanel && disqusThread) {
+        commentsPanel.appendChild(disqusThread);   // Disqus dans le panneau
         disqusThread.style.display = 'block';
-        // identifiant unique pour ce spot
+    
         const spotId = 'spot-' + i;
         loadDisqusForSpot(spotId);
       }
