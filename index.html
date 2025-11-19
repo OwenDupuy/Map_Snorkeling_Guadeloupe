@@ -361,11 +361,30 @@
       object-fit: cover;
     }
 
+    .popup-comments {
+      margin-top: 10px;
+      max-height: 260px;
+      overflow-y: auto;
+      border-top: 1px solid rgba(0,0,0,0.1);
+      padding-top: 6px;
+    }
+
+    .popup-comments .comments-hint {
+      font-size: 0.85em;
+      margin-bottom: 4px;
+      color: #555;
+    }
+
+
     @media (max-width: 768px) {
 
       /* 1. Cacher le zoom sur mobile */
       .leaflet-control-zoom {
         display: none !important;
+      }
+
+      .popup-comments {
+        max-height: 200px;
       }
 
       #insta-button img {
@@ -559,7 +578,45 @@
       <img src="images/insta.png" alt="Instagram Underwater Insights">
     </a>
   </div>
-  
+
+  <!-- Parking invisible pour le module Disqus -->
+  <div id="disqus-parking" style="display:none;">
+    <div id="disqus_thread"></div>
+  </div>
+
+  <script>
+    // ⚠️ Remplace ici par TON shortname Disqus
+    const DISQUS_SHORTNAME = 'TON_SHORTNAME_ICI';
+
+    let disqusLoaded = false;
+
+    function loadDisqusForSpot(spotId) {
+      // première fois : on charge le script
+      if (!disqusLoaded) {
+        disqusLoaded = true;
+
+        window.disqus_config = function () {
+          this.page.url = window.location.href + '#' + spotId;
+          this.page.identifier = spotId;
+        };
+
+        const d = document, s = d.createElement('script');
+        s.src = 'https://' + DISQUS_SHORTNAME + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      } else {
+        // ensuite : on change juste de fil de discussion
+        DISQUS.reset({
+          reload: true,
+          config: function () {
+            this.page.url = window.location.href + '#' + spotId;
+            this.page.identifier = spotId;
+          }
+        });
+      }
+    }
+  </script>
+
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/leaflet-search@4.0.0/dist/leaflet-search.min.js"></script>
 
@@ -1176,7 +1233,13 @@
           ${spot.desc[currentLang]}<br>
           Note : ${getStars(spot.rating)}<br><br>
           ${generateImagesHtml(spot, index)}
+          <div class="popup-comments" id="comments-container-${index}">
+            <div class="comments-hint">
+              💬 Comment about this spot :
+            </div>
+          </div>
         `;
+
 
         marker.bindPopup(newPopupContent);
         marker.options.title = spot.name[currentLang]; // important pour la recherche
@@ -1283,6 +1346,12 @@
         ${spot.desc[currentLang]}<br>
         Note : ${getStars(spot.rating)}<br><br>
         ${generateImagesHtml(spot, index)}
+        <div class="popup-comments" id="comments-container-${index}">
+          <div class="comments-hint">
+            💬 Commentaires sur ce spot :
+          </div>
+          <!-- Disqus sera déplacé ici au moment d'ouvrir la popup -->
+        </div>
       `;
 
       const icon = L.divIcon({
@@ -1376,6 +1445,18 @@
         animate: true,
         duration: 0.6
       });
+      // --- 💬 Gestion des commentaires Disqus ---
+      const popupEl = e.popup.getElement();
+      const commentsContainer = popupEl.querySelector(`#comments-container-${i}`);
+      const disqusThread = document.getElementById('disqus_thread');
+
+      if (commentsContainer && disqusThread) {
+        commentsContainer.appendChild(disqusThread);  // on déplace Disqus dans la popup
+        disqusThread.style.display = 'block';
+        // identifiant unique pour ce spot
+        const spotId = 'spot-' + i;
+        loadDisqusForSpot(spotId);
+      }
     });
     
     map.on('popupclose', function (e) {
@@ -1390,8 +1471,14 @@
         clearInterval(sliderIntervals[i]);
         delete sliderIntervals[i];
       }
+      // 💬 On remet Disqus dans le parking pour éviter qu’il parte avec la popup
+      const disqusThread = document.getElementById('disqus_thread');
+      const parking = document.getElementById('disqus-parking');
+      if (disqusThread && parking) {
+        parking.appendChild(disqusThread);
+        disqusThread.style.display = 'none';
+      }
     });
-
 
     // --- Ouverture / fermeture du bloc filtres ---
     const filtersToggle = document.getElementById('filters-toggle');
