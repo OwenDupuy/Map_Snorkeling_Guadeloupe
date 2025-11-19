@@ -249,7 +249,7 @@
       filter: blur(6px);
       pointer-events: none;
     }
-
+    
     /* Overlay plein écran pour centrer le carré blanc */
     #language-modal {
       position: fixed;
@@ -312,6 +312,20 @@
       color: white;
     }
 
+    .lang-button {
+      width: 100%;
+      padding: 8px 10px;
+      background: #f0f0f0;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 8px;
+      font-size: 1em;
+    }
+
+    .lang-button:hover {
+      background: #e0e0e0;
+    }
 
     @media (max-width: 768px) {
 
@@ -411,21 +425,25 @@
 
   <div id="filters-box">
     <button id="filters-toggle" class="filters-header">
-      <span>Filtres</span>
+      <span>Menu</span>
       <span class="filters-arrow">▾</span>
     </button>
 
     <div id="filters-content" class="hidden">
+      <div id="menu-search-container"></div>  <!-- emplacement pour la barre de recherche -->
+      <hr>
+      <div id="menu-baselayers"></div>        <!-- emplacement fonds de carte -->
+      <hr>
       <label><input type="checkbox" data-rating="5" checked> 5 ★ Excellent</label>
       <label><input type="checkbox" data-rating="4" checked> 4 ★ Très bien</label>
       <label><input type="checkbox" data-rating="3" checked> 3 ★ Bien</label>
       <label><input type="checkbox" data-rating="2" checked> 2 ★ Neutre</label>
       <label><input type="checkbox" data-rating="1" checked> 1 ★ Mauvais</label>
-
       <hr style="margin:8px 0;">
-
       <label><input type="checkbox" data-species="tortue"> Tortues 🐢</label>
       <label><input type="checkbox" data-species="requin"> Requins 🦈</label>
+      <hr>
+      <button onclick="openLanguageModal()" class="lang-button">🌐 Changer de langue</button>
     </div>
 
   </div>
@@ -526,6 +544,13 @@
       applyLanguage();
     }
 
+    // Fonction pour rouvrir la modale de langue
+    function openLanguageModal() {
+      const modal = document.getElementById('language-modal');
+      modal.classList.remove('hidden');
+      document.body.classList.add('lang-modal-open');
+    }
+
     /* ----------------------------------------------------------
        1. Définir les limites autour de la Guadeloupe
     ----------------------------------------------------------- */
@@ -579,9 +604,9 @@
     };
 
     L.control.layers(baseLayers, null, {
-      position: 'topleft',
       collapsed: false
-    }).addTo(map);
+    }).addTo(document.getElementById('menu-baselayers'));
+
 
     /* ----------------------------------------------------------
        5. Fonctions utilitaires pour couleurs + étoiles
@@ -1191,7 +1216,7 @@
       }
     });
 
-    map.addControl(searchControl);
+    searchControl.addTo(document.getElementById('menu-search-container'));
 
   // --- Auto-défilement des images + gestion UI + recentrage fixe ---
     map.on('popupopen', function (e) {
