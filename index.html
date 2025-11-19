@@ -101,7 +101,10 @@
     #filters-box {
       position: absolute;
       left: 20px;
-      top: 225px;              /* ≈ sous la barre de recherche */
+      top: 145px;              /* ≈ sous la barre de recherche */
+      right: auto;
+      bottom: auto;
+      transform: none;
       background: white;
       padding: 10px 12px;
       border-radius: 12px;
@@ -244,6 +247,103 @@
       pointer-events: none;
     }
 
+    /* Quand la modale de langue est ouverte, on floute la carte */
+    body.lang-modal-open #map {
+      filter: blur(6px);
+      pointer-events: none;
+    }
+    
+    /* Overlay plein écran pour centrer le carré blanc */
+    #language-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4); /* léger voile noir pour l’arrière-plan */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20000;
+    }
+
+    /* Cachée quand on a choisi la langue */
+    #language-modal.hidden {
+      display: none;
+    }
+
+    /* Le carré blanc au centre */
+    .language-modal-content {
+      background: white;
+      padding: 24px 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      max-width: 90vw;
+      text-align: center;
+      font-family: system-ui, sans-serif;
+    }
+
+    .language-modal-content h2 {
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+
+    .language-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .language-buttons button {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .language-buttons button:hover {
+      transform: translateY(-1px);
+    }
+
+    .language-buttons .btn-fr {
+      background: #1a9850;
+      color: white;
+    }
+
+    .language-buttons .btn-en {
+      background: #0077b6;
+      color: white;
+    }
+
+    .lang-button {
+      width: 100%;
+      padding: 8px 10px;
+      background: #f0f0f0;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 8px;
+      font-size: 1em;
+    }
+
+    .lang-button:hover {
+      background: #e0e0e0;
+    }
+
+    /* Titre overlay dans la lightbox */
+    .lightbox-title {
+      position: absolute;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #fff;
+      font-family: 'Dancing Script', cursive;
+      font-size: 2rem;
+      font-weight: 600;
+      text-shadow: 0 0 12px rgba(0,0,0,0.75);
+      pointer-events: none;
+    }
+
     @media (max-width: 768px) {
 
       /* 1. Cacher le zoom sur mobile */
@@ -332,9 +432,32 @@
       }
     }
 
+    /* Contrôle des fonds de carte intégré dans le menu */
+    #menu-baselayers .leaflet-control,
+    #menu-baselayers .leaflet-control-layers {
+      float: none;        /* pas de flottant */
+      clear: both;
+      display: block;
+      margin: 0;          /* pas de marge autour de la boîte Leaflet */
+    }
 
+    /* On enlève la boîte indépendante et l’ombre portée */
+    #menu-baselayers .leaflet-control-layers {
+      background: transparent;
+      box-shadow: none;
+      border-radius: 0;
+      padding: 0;
+    }
+
+    /* Optionnel : un peu d’air autour du contenu du contrôle */
+    #menu-baselayers .leaflet-control-layers-list {
+      margin-top: 4px;
+    }
+    
   </style>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-search@4.0.0/dist/leaflet-search.min.css">
+  <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600&display=swap">
 
 </head>
   
@@ -342,11 +465,16 @@
 
   <div id="filters-box">
     <button id="filters-toggle" class="filters-header">
-      <span>Filtres</span>
+      <span>Menu</span>
       <span class="filters-arrow">▾</span>
     </button>
 
     <div id="filters-content" class="hidden">
+      <!-- 1. Fonds de carte -->
+      <div id="menu-baselayers"></div>
+      <hr style="margin:8px 0;">
+
+      <!-- 3. Filtres par note -->
       <label><input type="checkbox" data-rating="5" checked> 5 ★ Excellent</label>
       <label><input type="checkbox" data-rating="4" checked> 4 ★ Très bien</label>
       <label><input type="checkbox" data-rating="3" checked> 3 ★ Bien</label>
@@ -355,9 +483,16 @@
 
       <hr style="margin:8px 0;">
 
+      <!-- 3b. Filtres espèces -->
       <label><input type="checkbox" data-species="tortue"> Tortues 🐢</label>
       <label><input type="checkbox" data-species="requin"> Requins 🦈</label>
-    </div>
+
+      <hr>
+
+      <!-- 4. Changer de langue -->
+      <button onclick="openLanguageModal()" class="lang-button">🌐 Changer de langue</button>
+</div>
+
 
   </div>
   <div id="map"></div>
@@ -370,14 +505,116 @@
 
       <img id="lightbox-img" src="" alt="Photo spot">
 
+      <!-- 🔥 Titre overlay -->
+      <div class="lightbox-title">Underwater Insights</div>
+
       <button class="lightbox-arrow right" onclick="changeLightboxImage(1)">›</button>
     </div>
   </div>
 
+
+  <!-- MODALE DE LANGUE -->
+  <div id="language-modal">
+    <div class="language-modal-content">
+      <h2>Choose your language</h2>
+      <p>You can change the language later in the "Menu".</p>
+      <div class="language-buttons">
+        <button class="btn-fr" onclick="selectLanguage('fr')">Français</button>
+        <button class="btn-en" onclick="selectLanguage('en')">English</button>
+      </div>
+    </div>
+  </div>
+  
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/leaflet-search@4.0.0/dist/leaflet-search.min.js"></script>
 
   <script>
+
+    // === Choix de langue & textes FR/EN ===
+    let currentLang = 'en';
+
+    const i18n = {
+      fr: {
+        legendTitle: "Qualité du spot",
+        filtersTitle: "Menu",
+        ratingTexts: {
+          5: "5 ★ Excellent",
+          4: "4 ★ Très bien",
+          3: "3 ★ Bien",
+          2: "2 ★ Neutre",
+          1: "1 ★ Mauvais"
+        },
+        species: {
+          tortue: "Tortues 🐢",
+          requin: "Requins 🦈"
+        },
+        searchPlaceholder: "Rechercher un spot...",
+        mapLayers: {
+          satellite: "Vue Satellite",
+          osm: "Carte classique (OSM)",
+          relief: "Relief / Topographie"
+        },
+        changeLanguage: "Changer de langue"
+      },
+      en: {
+        legendTitle: "Spot quality",
+        filtersTitle: "Menu",
+        ratingTexts: {
+          5: "5 ★ Excellent",
+          4: "4 ★ Very good",
+          3: "3 ★ Good",
+          2: "2 ★ Average",
+          1: "1 ★ Poor"
+        },
+        species: {
+          tortue: "Turtles 🐢",
+          requin: "Sharks 🦈"
+        },
+        searchPlaceholder: "Search a spot...",
+        mapLayers: {
+          satellite: "Satellite View",
+          osm: "Classic map (OSM)",
+          relief: "Relief / Topographic"
+        },
+        changeLanguage: "Change language"
+      }
+    };
+
+    // Ces variables serviront à manipuler la légende et la barre de recherche
+    let legendControl;
+    let searchControl;
+
+    // À l'ouverture de la page, on affiche la modale et on floute la carte
+    document.body.classList.add('lang-modal-open');
+
+    // Si tu veux mémoriser le choix dans le navigateur :
+    const savedLang = localStorage.getItem('snorkelLang');
+    if (savedLang) {
+      currentLang = savedLang;
+      // On cache la modale et on enlève le flou tout de suite
+      document.getElementById('language-modal').classList.add('hidden');
+      document.body.classList.remove('lang-modal-open');
+    }
+
+    // Fonction appelée quand on clique sur Français / English
+    function selectLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('snorkelLang', lang);
+
+      document.getElementById('language-modal').classList.add('hidden');
+      document.body.classList.remove('lang-modal-open');
+
+      // On applique la langue à toute l’interface
+      applyLanguage();
+    }
+
+    // Fonction pour rouvrir la modale de langue
+    function openLanguageModal() {
+      const modal = document.getElementById('language-modal');
+      modal.classList.remove('hidden');
+      document.body.classList.add('lang-modal-open');
+    }
+
     /* ----------------------------------------------------------
        1. Définir les limites autour de la Guadeloupe
     ----------------------------------------------------------- */
@@ -424,16 +661,9 @@
     /* ----------------------------------------------------------
        4. Contrôle permettant de changer de fond de carte
     ----------------------------------------------------------- */
-    const baseLayers = {
-      "Satellite": satellite,
-      "Classique (OSM)": osm,
-      "Relief": relief
-    };
+    let baseLayers = {};
 
-    L.control.layers(baseLayers, null, {
-      position: 'topleft',
-      collapsed: false
-    }).addTo(map);
+    let layersControl = null;
 
     /* ----------------------------------------------------------
        5. Fonctions utilitaires pour couleurs + étoiles
@@ -458,177 +688,349 @@
     ----------------------------------------------------------- */
     const spots = [
       {
-        name: "Malendure plage, Bouillante",
-        coords: [16.1726, -61.7791],       // plage de Malendure :contentReference[oaicite:0]{index=0}
-        desc: "Un lieu incontournable pour observer des tortues marines. Pour maximiser vos chances, rejoignez la petite plage située au nord de la plage principale de Malendure : c’est là que les rencontres sont les plus fréquentes. On y croise aussi régulièrement des poissons-torpilles et quelques barracudas. La visibilité y est généralement très bonne, ce qui en fait un spot parfait pour une exploration tranquille.",
+        name: {
+          fr: "Malendure plage, Bouillante",
+          en: "Malendure beach, Bouillante"
+        },
+        desc: {
+          fr: "Un lieu incontournable pour observer des tortues marines. Pour maximiser vos chances, rejoignez la petite plage située au nord de la plage principale de Malendure : c’est là que les rencontres sont les plus fréquentes. On y croise aussi régulièrement des poissons-torpilles et quelques barracudas. La visibilité y est généralement très bonne, ce qui en fait un spot parfait pour une exploration tranquille.",
+          en: "A must-see spot to observe sea turtles. To maximize your chances, head to the small beach located north of the main Malendure beach: this is where encounters are most frequent. Torpedo rays and a few barracudas are also commonly seen. Visibility is generally excellent, making it the perfect place for a peaceful exploration."
+        },
+        coords: [16.1726, -61.7791],
         rating: 4,
         species: ["tortue"],
-        images: ["images/malendure1.JPG","images/malendure2.JPG","images/malendure3.JPG","images/malendure4.jpg","images/malendure5.jpg","images/malendure6.jpg","images/malendure7.jpg","images/malendure8.jpg"]
+        images: [
+          "images/malendure1.JPG","images/malendure2.JPG","images/malendure3.JPG",
+          "images/malendure4.jpg","images/malendure5.jpg","images/malendure6.jpg",
+          "images/malendure7.jpg","images/malendure8.jpg"
+        ]
       },
       {
-        name: "Bosco, Deshaies",
-        coords: [16.2864, -61.8027],    // plage Bosco / Paul Thomas :contentReference[oaicite:1]{index=1}
-        desc: "Spot discret et paisible – Notre coup de cœur : Un lieu calme, presque secret, auquel on accède en contournant un portail signalé comme privé (l’accès est parfaitement légal). C’est l’un de nos spots préférés : la plage est bordée d’une grande richesse aquatique, avec une excellente visibilité et, parfois, la chance de croiser des tortues vertes ou imbriquées. De nombreux crabes touloulous pourrons vous guidez jusqu’a la mer. La plage dispose d’un petit carbet idéal pour installer un hamac et se détendre entre deux sessions de snorkeling. On y trouve aussi quantité de coquillages, parfaits pour les curieux. Une ambiance tranquille et authentique, à ne pas manquer.",
+        name: {
+          fr: "Bosco, Deshaies",
+          en: "Bosco, Deshaies"
+        },
+        desc: {
+          fr: "Spot discret et paisible – Notre coup de cœur : Un lieu calme, presque secret, auquel on accède en contournant un portail signalé comme privé (l’accès est parfaitement légal). C’est l’un de nos spots préférés : la plage est bordée d’une grande richesse aquatique, avec une excellente visibilité et, parfois, la chance de croiser des tortues vertes ou imbriquées. De nombreux crabes touloulous pourrons vous guidez jusqu’a la mer. La plage dispose d’un petit carbet idéal pour installer un hamac et se détendre entre deux sessions de snorkeling. On y trouve aussi quantité de coquillages, parfaits pour les curieux. Une ambiance tranquille et authentique, à ne pas manquer.",
+          en: "A discreet and peaceful spot – Our favorite: A quiet, almost secret location, accessible by walking around a gate marked as private (the access is fully legal). It is one of our preferred spots: the shoreline is rich in marine life with excellent visibility, and sometimes you may spot green or hawksbill turtles. Numerous touloulou crabs may guide you toward the sea. The beach has a small shelter perfect for hanging a hammock and relaxing between snorkeling sessions. You’ll also find many shells, ideal for curious explorers. A calm, authentic atmosphere not to be missed."
+        },
+        coords: [16.2864, -61.8027],
         rating: 5,
         species: ["tortue"],
-        images: ["images/bosco1.jpg","images/bosco2.jpg","images/bosco3.jpg","images/bosco4.jpg","images/bosco5.jpg","images/bosco6.jpg","images/bosco7.jpg","images/bosco8.jpg","images/bosco9.jpg"]
+        images: [
+          "images/bosco1.jpg","images/bosco2.jpg","images/bosco3.jpg",
+          "images/bosco4.jpg","images/bosco5.jpg","images/bosco6.jpg",
+          "images/bosco7.jpg","images/bosco8.jpg","images/bosco9.jpg"
+        ]
       },
       {
-        name: "Anse de Deshaies, Deshaies",
-        coords: [16.3075, -61.7966],      // zone Deshaies littoral :contentReference[oaicite:2]{index=2}
-        desc: "Même si la zone accueille de nombreux bateaux et que l’eau peut parfois être un peu turbide, le spot réserve de belles rencontres : poissons-globes, tortues et une faune variée évoluent dans ce secteur protégé des vagues. L’ambiance reste globalement calme et c’est un endroit plaisant pour une sortie snorkeling sans trop de courant. Petit bonus : l’excellent restaurant L’Amer se trouve juste à côté, parfait pour prolonger la journée (l’Assiette créole est un délice).",
+        name: {
+          fr: "Anse de Deshaies, Deshaies",
+          en: "Deshaies cove, Deshaies"
+        },
+        desc: {
+          fr: "Même si la zone accueille de nombreux bateaux et que l’eau peut parfois être un peu turbide, le spot réserve de belles rencontres : poissons-globes, tortues et une faune variée évoluent dans ce secteur protégé des vagues. L’ambiance reste globalement calme et c’est un endroit plaisant pour une sortie snorkeling sans trop de courant. Petit bonus : l’excellent restaurant L’Amer se trouve juste à côté, parfait pour prolonger la journée (l’Assiette créole est un délice).",
+          en: "Even though the area hosts many boats and the water can sometimes be a bit murky, the spot still offers lovely encounters: pufferfish, turtles, and a variety of marine life thrive in this wave-protected zone. The atmosphere is generally calm, making it a pleasant place for a snorkeling trip without strong currents. Bonus: the excellent restaurant L’Amer is right nearby, perfect for extending your day (the Creole platter is delicious)."
+        },
+        coords: [16.3075, -61.7966],
         rating: 2,
         species: ["tortue"],
         images: []
       },
       {
-        name: "Ravine Thomas, Bouillante",
-        coords: [16.1095, -61.7747],      // commune Bouillante :contentReference[oaicite:3]{index=3}
-        desc: "Un spot magnifique où la vie foisonne : nudibranches, serpentines, poulpes, coquillages… Les roches nombreuses créent une multitude de petits abris qui attirent une grande diversité d’espèces et offrent un décor riche en couleurs tout au long de l’exploration. La zone abrite une biodiversité de rêve pour les amateurs de macro et d’observations détaillées. En bonus, le site se trouve à proximité de bassins d’eaux thermales, parfaits pour une pause détente après la sortie.",
-        rating: 4,
+        name: {
+          fr: "Ravine Thomas, Bouillante",
+          en: "Ravine Thomas, Bouillante"
+        },
+        desc: {
+          fr: "Un spot magnifique où la vie foisonne : nudibranches, serpentines, poulpes, coquillages… Les roches nombreuses créent une multitude de petits abris qui attirent une grande diversité d’espèces et offrent un décor riche en couleurs tout au long de l’exploration. La zone abrite une biodiversité de rêve pour les amateurs de macro et d’observations détaillées. En bonus, le site se trouve à proximité de bassins d’eaux thermales, parfaits pour une pause détente après la sortie.",
+          en: "A stunning spot teeming with life: nudibranchs, snake eels, octopuses, seashells… The many rocks create countless tiny shelters that attract a great variety of species and provide a colorful scenery throughout the exploration. The area offers dreamlike biodiversity for macro lovers and detailed observation. As a bonus, the site is close to natural hot spring pools—perfect for relaxing after your session."
+        },
+        coords: [16.1095, -61.7747],
+        rating: 5,
         species: ["tortue"],
-        images: ["images/ravine_thomas1.jpg","images/ravine_thomas2.jpg","images/ravine_thomas3.jpg","images/ravine_thomas4.jpg","images/ravine_thomas5.jpg","images/ravine_thomas6.JPG","images/ravine_thomas7.jpg","images/ravine_thomas8.jpg","images/ravine_thomas9.jpg","images/ravine_thomas10.jpg"]
+        images: [
+          "images/ravine_thomas1.jpg","images/ravine_thomas2.jpg","images/ravine_thomas3.jpg",
+          "images/ravine_thomas4.jpg","images/ravine_thomas5.jpg","images/ravine_thomas6.JPG",
+          "images/ravine_thomas7.jpg","images/ravine_thomas8.jpg","images/ravine_thomas9.jpg",
+          "images/ravine_thomas10.jpg"
+        ]
       },
       {
-        name: "Anse à la Barque, Bouillante",
-        coords: [16.0893, -61.7688],      // estimation proche Bouillante
-        desc: "Un lieu bien protégé des vagues, généralement très calme et peu fréquenté par les bateaux. La zone abrite une belle diversité d’espèces, avec notamment plusieurs pieuvres, et de nombreux juvéniles qui trouvent refuge dans les roches. Le fond est constitué de structures rocheuses aménagées par l’humain, créant une multitude de petits abris pour la faune. En longeant l’anse, on passe d’une petite mangrove à de hautes falaises, offrant un décor varié et agréable à explorer.",
+        name: {
+          fr: "Anse à la Barque, Bouillante",
+          en: "Anse à la Barque, Bouillante"
+        },
+        desc: {
+          fr: "Un lieu bien protégé des vagues, généralement très calme et peu fréquenté par les bateaux. La zone abrite une belle diversité d’espèces, avec notamment plusieurs pieuvres, et de nombreux juvéniles qui trouvent refuge dans les roches. Le fond est constitué de structures rocheuses aménagées par l’humain, créant une multitude de petits abris pour la faune. En longeant l’anse, on passe d’une petite mangrove à de hautes falaises, offrant un décor varié et agréable à explorer.",
+          en: "A spot well-sheltered from waves, generally very calm and rarely visited by boats. The area hosts a nice diversity of species, including several octopuses and many juveniles that take refuge in the rocks. The seabed is made of human-built rocky structures, creating many small shelters for marine life. Following the cove, you move from a small mangrove to tall cliffs, offering varied and pleasant scenery to explore."
+        },
+        coords: [16.0893, -61.7688],
         rating: 3,
         species: ["tortue"],
-        images: ["images/anse_a_la_barque1.JPG","images/anse_a_la_barque2.jpg","images/anse_a_la_barque3.jpg","images/anse_a_la_barque4.jpg","images/anse_a_la_barque5.jpg","images/anse_a_la_barque6.jpg"]
+        images: [
+          "images/anse_a_la_barque1.JPG","images/anse_a_la_barque2.jpg","images/anse_a_la_barque3.jpg",
+          "images/anse_a_la_barque4.jpg","images/anse_a_la_barque5.jpg","images/anse_a_la_barque6.jpg"
+        ]
       },
       {
-        name: "Petite Terre, Terre-de-Bas",
-        coords: [16.1747, -61.1092],      // estimation Petite-Terre
-        desc: "Un incontournable absolu. Véritable nurserie de requins-citrons et de tortues, Petite Terre est l’un des plus beaux sites de snorkeling de Guadeloupe. On y observe régulièrement des requins-citrons juvéniles, des raies pastenagues, et parfois, avec un peu de chance, des requins dormeurs ou des raies aigles. Les barracudas sont aussi fréquents dans les zones calmes. Il s’agit d’une réserve naturelle, avec de nombreuses règles à respecter pour protéger l’écosystème. À terre, la présence d’iguanes endémiques. Sous l’eau, de nombreux coraux sont malheureusement abîmés dans les zones très fréquentées. La zone ouverte au public se situe uniquement entre les deux îles ; le reste de la réserve est strictement interdit d’accès afin de préserver la faune. Un site exceptionnel, à visiter au moins une fois.",
+        name: {
+          fr: "Petite Terre, Terre-de-Bas",
+          en: "Petite Terre, Terre-de-Bas"
+        },
+        desc: {
+          fr: "Un incontournable absolu. Véritable nurserie de requins-citrons et de tortues, Petite Terre est l’un des plus beaux sites de snorkeling de Guadeloupe. On y observe régulièrement des requins-citrons juvéniles, des raies pastenagues, et parfois, avec un peu de chance, des requins dormeurs ou des raies aigles. Les barracudas sont aussi fréquents dans les zones calmes. Il s’agit d’une réserve naturelle, avec de nombreuses règles à respecter pour protéger l’écosystème. À terre, la présence d’iguanes endémiques. Sous l’eau, de nombreux coraux sont malheureusement abîmés dans les zones très fréquentées. La zone ouverte au public se situe uniquement entre les deux îles ; le reste de la réserve est strictement interdit d’accès afin de préserver la faune. Un site exceptionnel, à visiter au moins une fois.",
+          en: "An absolute must-see. A true nursery for lemon sharks and turtles, Petite Terre is one of Guadeloupe’s most beautiful snorkeling sites. Juvenile lemon sharks and stingrays are commonly spotted, and sometimes—if you're lucky—nurse sharks or eagle rays. Barracudas are also frequent in calm areas. It is a protected natural reserve with many rules to preserve the ecosystem. On land, you will see endemic iguanas. Underwater, many corals are unfortunately damaged in highly visited zones. The public area is limited to the space between the two islands; the rest of the reserve is strictly off-limits to protect wildlife. An exceptional site to visit at least once."
+        },
+        coords: [16.1747, -61.1092],
         rating: 5,
         species: ["tortue", "requin"],
-        images: ["images/petite_terre1.jpg","images/petite_terre2.jpg","images/petite_terre3.jpg","images/petite_terre4.jpg","images/petite_terre5.jpg","images/petite_terre6.jpg","images/petite_terre7.jpg","images/petite_terre8.jpg","images/petite_terre9.jpg"]
+        images: [
+          "images/petite_terre1.jpg","images/petite_terre2.jpg","images/petite_terre3.jpg",
+          "images/petite_terre4.jpg","images/petite_terre5.jpg","images/petite_terre6.jpg",
+          "images/petite_terre7.jpg","images/petite_terre8.jpg","images/petite_terre9.jpg"
+        ]
       },
       {
-        name: "Trou Man Louis, Anse-Bertrand",
-        coords: [16.4861, -61.4972],      // estimation Port-Louis côte Est
-        desc: "Un lieu splendide, avec une eau chaude, limpide et remplie de poissons colorés. Cependant, la prudence est de mise : lorsque la houle se lève, le snorkeling peut devenir difficile et l’eau plus agitée. Par mer calme, c’est un véritable petit paradis pour une exploration sereine.",
-        rating: 3,
+        name: {
+          fr: "Trou Man Louis, Port-Louis",
+          en: "Trou Man Louis, Port-Louis"
+        },
+        desc: {
+          fr: "Un lieu splendide, avec une eau chaude, limpide et remplie de poissons colorés. Cependant, la prudence est de mise : lorsque la houle se lève, le snorkeling peut devenir difficile et l’eau plus agitée. Par mer calme, c’est un véritable petit paradis pour une exploration sereine.",
+          en: "A gorgeous spot with warm, clear water filled with colorful fish. However, caution is needed: when the swell rises, snorkeling can become difficult and the water more turbulent. In calm seas, it becomes a true little paradise for peaceful exploration."
+        },
+        coords: [16.4861, -61.4972],
+        rating: 4,
         species: [],
         images: ["images/trou_man_louis1.JPG","images/trou_man_louis2.jpg"]
       },
       {
-        name: "Îlets du Gosier, Le Gosier",
-        coords: [16.2000, -61.4921],      // estimation Le Gosier
-        desc: "La zone présente un fort impact anthropique, et l’état du site sous-marin est malheureusement très altéré. La balade autour de l’îlet reste agréable, mais ce n’est pas un endroit recommandé pour le snorkeling, la biodiversité y étant très pauvre.",
+        name: {
+          fr: "Îlets du Gosier, Le Gosier",
+          en: "Gosier islets, Le Gosier"
+        },
+        desc: {
+          fr: "La zone présente un fort impact anthropique, et l’état du site sous-marin est malheureusement très altéré. La balade autour de l’îlet reste agréable, mais ce n’est pas un endroit recommandé pour le snorkeling, la biodiversité y étant très pauvre.",
+          en: "The area shows strong human impact, and the underwater environment is unfortunately very degraded. Walking around the islet is pleasant, but it is not a recommended snorkeling site due to its very low biodiversity."
+        },
+        coords: [16.2000, -61.4921],
         rating: 1,
         species: [],
         images: []
       },
       {
-        name: "Malendure pointe, Bouillante",
-        coords: [16.1691, -61.7776],       // identique à Malendure plage
-        desc: "Juste au pied du club de plongée Les Heures Saines se trouve le véritable dortoir des tortues vertes et imbriquées locales. Le spot est particulièrement impressionnant de nuit, lorsque les tortues viennent se reposer entre les blocs rocheux. La zone offre également une grande richesse de coraux et d’espèces qui se cachent dans les formations rocheuses. Un lieu à forte valeur naturelle, idéal pour une sortie calme et immersive.",
-        rating: 4,
-        species: ["tortue"],
-        images: ["images/malendure_night1.jpg","images/malendure_night2.jpg","images/malendure_night3.jpg","images/malendure_night4.jpg","images/malendure_night5.jpg","images/malendure_night6.JPG","images/malendure_night7.jpg","images/malendure_night8.jpg","images/malendure_night9.jpg","images/malendure_night10.jpg","images/malendure_night11.jpg","images/malendure_night12.jpg","images/malendure_night13.jpg"]
-      },
-      {
-        name: "Îlets Pigeon (Réserve Cousteau), Bouillante",
-        coords: [16.1674, -61.7895],      // coord. Réserve Cousteau :contentReference[oaicite:4]{index=4}
-        desc: "Un spot accessible en kayak, avec une eau transparente et une vaste zone à explorer. On y rencontre de nombreux poissons balistes non agressifs, ainsi qu’une faune variée dispersée sur une grande superficie. Le site possède encore un fort potentiel d’exploration, idéal pour ceux qui aiment s’aventurer un peu plus loin.",
+        name: {
+          fr: "Malendure, Bouillante – dortoir des tortues",
+          en: "Malendure, Bouillante – turtle sleeping ground"
+        },
+        desc: {
+          fr: "Juste au pied du club de plongée Les Heures Saines se trouve le véritable dortoir des tortues vertes et imbriquées locales. Le spot est particulièrement impressionnant de nuit, lorsque les tortues viennent se reposer entre les blocs rocheux. La zone offre également une grande richesse de coraux et d’espèces qui se cachent dans les formations rocheuses. Un lieu à forte valeur naturelle, idéal pour une sortie calme et immersive.",
+          en: "Right below the dive club Les Heures Saines lies the true sleeping ground of the local green and hawksbill turtles. The spot is especially impressive at night, when turtles come to rest among the rocky formations. The area is also rich in corals and species hiding in the rocks. A place of high natural value, ideal for a calm and immersive night snorkeling session."
+        },
+        coords: [16.1691, -61.7776],
         rating: 5,
         species: ["tortue"],
-        images: ["images/reserve_cousteau1.jpg","images/reserve_cousteau2.JPG","images/reserve_cousteau3.jpg"]
+        images: [
+          "images/malendure_night1.jpg","images/malendure_night2.jpg","images/malendure_night3.jpg",
+          "images/malendure_night4.jpg","images/malendure_night5.jpg","images/malendure_night6.JPG",
+          "images/malendure_night7.jpg","images/malendure_night8.jpg","images/malendure_night9.jpg",
+          "images/malendure_night10.jpg","images/malendure_night11.jpg","images/malendure_night12.jpg",
+          "images/malendure_night13.jpg"
+        ]
       },
       {
-        name: "Plage de Leroux, Deshaies",
-        coords: [16.2769, -61.8050],      // proche plage Bosco / Leroux :contentReference[oaicite:5]{index=5}
-        desc: "L’un des meilleurs endroits pour profiter d’un excellent équilibre entre calme, beauté et qualité de snorkeling. L’épi central concentre une biodiversité remarquable, même si la zone reste relativement petite. Le reste du site est un peu plus dégradé, mais l’ensemble demeure très agréable : passer une après-midi sur cette plage est vivement recommandé.",
+        name: {
+          fr: "Îlets Pigeon (Réserve Cousteau), Bouillante",
+          en: "Cousteau Reserve (Pigeon Islets), Bouillante"
+        },
+        desc: {
+          fr: "Un spot accessible en kayak, avec une eau transparente et une vaste zone à explorer. On y rencontre de nombreux poissons balistes non agressifs, ainsi qu’une faune variée dispersée sur une grande superficie. Le site possède encore un fort potentiel d’exploration, idéal pour ceux qui aiment s’aventurer un peu plus loin.",
+          en: "A spot accessible by kayak, with clear waters and a vast area to explore. Many non-aggressive triggerfish can be seen, along with a diverse marine fauna spread across a large zone. The site still holds great exploration potential, ideal for those who enjoy venturing further."
+        },
+        coords: [16.1674, -61.7895],
+        rating: 5,
+        species: ["tortue"],
+        images: [
+          "images/reserve_cousteau1.jpg","images/reserve_cousteau2.JPG","images/reserve_cousteau3.jpg"
+        ]
+      },
+      {
+        name: {
+          fr: "Plage de Leroux, Deshaies",
+          en: "Leroux beach, Deshaies"
+        },
+        desc: {
+          fr: "L’un des meilleurs endroits pour profiter d’un excellent équilibre entre calme, beauté et qualité de snorkeling. L’épi central concentre une biodiversité remarquable, même si la zone reste relativement petite. Le reste du site est un peu plus dégradé, mais l’ensemble demeure très agréable : passer une après-midi sur cette plage est vivement recommandé",
+          en: "One of the best places to enjoy a perfect balance of calmness, beauty, and snorkeling quality. The central jetty concentrates remarkable biodiversity, even though the area is relatively small. The rest of the site is slightly more degraded, but the whole place remains very pleasant—spending an afternoon here is highly recommended."
+        },
+        coords: [16.2769, -61.8050],
         rating: 3,
         species: ["tortue"],
-        images: ["images/plage_leroux1.jppg.JPG","images/plage_leroux2.jpg","images/plage_leroux3.jpg","images/plage_leroux4.jpg","images/plage_leroux5.jpg","images/plage_leroux6.jpg","images/plage_leroux7.JPG"]
+        images: [
+          "images/plage_leroux1.jppg.JPG","images/plage_leroux2.jpg","images/plage_leroux3.jpg",
+          "images/plage_leroux4.jpg","images/plage_leroux5.jpg","images/plage_leroux6.jpg",
+          "images/plage_leroux7.JPG"
+        ]
       },
       {
-        name: "Plage du Souffleur, Port-Louis",
-        coords: [16.4258, -61.5353],      // estimation Port-Louis
-        desc: "Le fond marin est assez dégradé, avec des résidus de filets de pêche et quelques plastiques dispersés sur le sable. L’eau reste belle et l’on peut croiser quelques poissons, mais le snorkeling est moins intéressant que sur d’autres sites de l’île. La plage, en revanche, est très fréquentée et particulièrement jolie, idéale pour profiter d’un moment au soleil en famille ou entre amis, même si l’exploration sous-marine est limitée.",
+        name: {
+          fr: "Plage du Souffleur, Port-Louis",
+          en: "Souffleur beach, Port-Louis"
+        },
+        desc: {
+          fr: "Le fond marin est assez dégradé, avec des résidus de filets de pêche et quelques plastiques dispersés sur le sable. L’eau reste belle et l’on peut croiser quelques poissons, mais le snorkeling est moins intéressant que sur d’autres sites de l’île. La plage, en revanche, est très fréquentée et particulièrement jolie, idéale pour profiter d’un moment au soleil en famille ou entre amis, même si l’exploration sous-marine est limitée.",
+          en: "The seabed is quite degraded, with remnants of fishing nets and some plastic scattered on the sand. The water remains beautiful and you can encounter some fish, but snorkeling is less interesting than in other areas of the island. The beach itself, however, is popular and very pretty—ideal for enjoying the sun with family or friends, even if underwater exploration is limited."
+        },
+        coords: [16.4258, -61.5353],
         rating: 2,
         species: [],
         images: ["images/plage_du_souffleur1.jpg","images/plage_du_souffleur2.jpg"]
       },
       {
-        name: "Plage d’Antigues, Port-Louis",
-        coords: [16.4369, -61.5386],      // estimation côte Est
-        desc: "Une plage similaire à la très connue plage du Souffleur, mais plus éloignée du centre, donc nettement plus calme et moins fréquentée. Les herbiers marins y sont plus présents, offrant de belles occasions d’observer des raies et parfois même des requins-citrons juvéniles. Un spot agréable pour ceux qui veulent profiter de la nature sans la foule.",
+        name: {
+          fr: "Plage d’Antigues, Port-Louis",
+          en: "Antigues beach, Port-Louis"
+        },
+        desc: {
+          fr: "Une plage similaire à la très connue plage du Souffleur, mais plus éloignée du centre, donc nettement plus calme et moins fréquentée. Les herbiers marins y sont plus présents, offrant de belles occasions d’observer des raies et parfois même des requins-citrons juvéniles. Un spot agréable pour ceux qui veulent profiter de la nature sans la foule.",
+          en: "A beach similar to the popular Souffleur Beach, but farther from the center, making it much calmer and less crowded. Seagrass beds are more present, offering great opportunities to observe rays and sometimes even juvenile lemon sharks. A pleasant spot for those who want to enjoy nature without the crowds."
+        },
+        coords: [16.4369, -61.5386],
         rating: 3,
         species: ["requin"],
-        images: ["images/plage_antigues1.jpg","images/plage_antigues2.jpg","images/plage_antigues3.jpg","images/plage_antigues4.jpg"]
+        images: [
+          "images/plage_antigues1.jpg","images/plage_antigues2.jpg",
+          "images/plage_antigues3.jpg","images/plage_antigues4.jpg"
+        ]
       },
       {
-        name: "Anse des Rochers, Saint-François",
-        coords: [16.2417, -61.3064],      // estimation St-François côté Est
-        desc: "Plage sécurisée et idéale pour les débutants Un site accessible via une résidence / centre de vacances, avec une très belle plage protégée des vagues et parfaitement adaptée au snorkeling calme. La zone abrite surtout des espèces juvéniles, qui trouvent refuge dans les herbiers et les petits amas de roches dispersés près du rivage. Un spot agréable pour une sortie tranquille et sécurisée.",
+        name: {
+          fr: "Anse des Rochers, Saint-François",
+          en: "Anse des Rochers, Saint-François"
+        },
+        desc: {
+          fr: "Plage sécurisée et idéale pour les débutants Un site accessible via une résidence / centre de vacances, avec une très belle plage protégée des vagues et parfaitement adaptée au snorkeling calme. La zone abrite surtout des espèces juvéniles, qui trouvent refuge dans les herbiers et les petits amas de roches dispersés près du rivage. Un spot agréable pour une sortie tranquille et sécurisée.",
+          en: "A safe beach ideal for beginners. A site accessible through a residence or holiday complex, featuring a beautiful wave-protected beach perfectly suited for calm snorkeling. The zone hosts mostly juvenile species that take refuge in seagrass beds and small rock clusters near the shore. A pleasant spot for a quiet and safe outing."
+        },
+        coords: [16.2417, -61.3064],
         rating: 2,
         species: [],
         images: []
       },
       {
-        name: "Les Trois Pointes, Vieux-Fort",
-        coords: [15.9556, -61.7105],      // estimation Vieux-Fort sud Basse-Terre
-        desc: "Un lieu riche en couleurs et en biodiversité, où les nuances de bleu sont absolument magnifiques et où de nombreuses espèces évoluent autour de vous. Il peut y avoir un peu de mouvement d’eau, donc prudence, mais l’endroit reste un spot reculé, paisible et parfait pour une exploration en immersion totale.",
+        name: {
+          fr: "Les Trois Pointes, Vieux-Fort",
+          en: "Three Points, Vieux-Fort"
+        },
+        desc: {
+          fr: "Un lieu riche en couleurs et en biodiversité, où les nuances de bleu sont absolument magnifiques et où de nombreuses espèces évoluent autour de vous. Il peut y avoir un peu de mouvement d’eau, donc prudence, mais l’endroit reste un spot reculé, paisible et parfait pour une exploration en immersion totale.",
+          en: "A place rich in color and biodiversity, with stunning shades of blue and many species surrounding you. There can be some water movement, so caution is advised, but it remains a secluded, peaceful spot perfect for full-immersion exploration."
+        },
+        coords: [15.9556, -61.7105],
         rating: 4,
         species: ["tortue"],
-        images: ["images/les_trois_pointes1.JPG","images/les_trois_pointes2.jpg","images/les_trois_pointes3.jpg"]
+        images: [
+          "images/les_trois_pointes1.JPG","images/les_trois_pointes2.jpg","images/les_trois_pointes3.jpg"
+        ]
       },
       {
-        name: "Morphy, Pointe-Noire",
-        coords: [16.2527, -61.8043],      
-        desc: "Un lieu légèrement exposé à la houle de la mer des Caraïbes, mais qui reste un excellent spot de plongée comme de snorkeling. Les reliefs sous-marins y sont particulièrement variés, avec une belle diversité de couleurs, d’espèces et de structures rocheuses. La plage est constituée de galets et la pente descend doucement jusqu’à environ 30 mètres de profondeur, offrant un décor grandiose même depuis la surface. C’est tout simplement l’un des sites les plus beaux et les plus colorés de la région, un incontournable pour les amateurs de fonds marins vibrants.",
+        name: {
+          fr: "Morphy, Pointe-Noire",
+          en: "Morphy, Pointe-Noire"
+        },
+        desc: {
+          fr: "Un lieu légèrement exposé à la houle de la mer des Caraïbes, mais qui reste un excellent spot de plongée comme de snorkeling. Les reliefs sous-marins y sont particulièrement variés, avec une belle diversité de couleurs, d’espèces et de structures rocheuses. La plage est constituée de galets et la pente descend doucement jusqu’à environ 30 mètres de profondeur, offrant un décor grandiose même depuis la surface. C’est tout simplement l’un des sites les plus beaux et les plus colorés de la région, un incontournable pour les amateurs de fonds marins vibrants.",
+          en: "A spot slightly exposed to Caribbean swell, yet still an excellent place for diving and snorkeling. The underwater reliefs are highly varied, with beautiful colors, species, and rocky structures. The beach is made of pebbles, and the slope drops gradually to around 30 meters, offering an impressive scenery even from the surface. One of the most beautiful and colorful sites in the region, a must for lovers of vibrant seascapes."
+        },
+        coords: [16.2527, -61.8043],
         rating: 4,
         species: ["tortue"],
-        images: ["images/morphy1.JPG","images/morphy2.JPG","images/morphy3.JPG","images/morphy4.JPG","images/morphy5.JPG","images/morphy6.JPG"]
+        images: [
+          "images/morphy1.JPG","images/morphy2.JPG","images/morphy3.JPG",
+          "images/morphy4.JPG","images/morphy5.JPG","images/morphy6.JPG"
+        ]
       },
       {
-        name: "Plage de la Résidence Départementale, Le Gosier",
-        coords: [16.2147, -61.5160],      
-        desc: "Petite plage située au pied du fort. L’endroit est charmant et un peu escarpé, mais la visibilité est très mauvaise : les vagues remuent constamment le sable, ce qui empêche toute observation sous-marine.",
+        name: {
+          fr: "Plage de la Résidence Départementale, Le Gosier",
+          en: "Départementale residence beach, Le Gosier"
+        },
+        desc: {
+          fr: "Petite plage située au pied du fort. L’endroit est charmant et un peu escarpé, mais la visibilité est très mauvaise : les vagues remuent constamment le sable, ce qui empêche toute observation sous-marine.",
+          en: "A small beach located at the foot of the fort. The place is charming but visibility is very poor: waves constantly stir the sand, making underwater observation impossible."
+        },
+        coords: [16.2147, -61.5160],
         rating: 1,
         species: [],
         images: []
       },
       {
-        name: "Plage de Bas-Du-Fort, Le Gosier",
-        coords: [16.2138, -61.5240],      
-        desc: "Jolie plage touristique mais snorkeling limité. Une très belle plage, petite et souvent fréquentée par les visiteurs. L’eau y est bien protégée, mais la visibilité reste faible et la biodiversité observée est assez limitée. Un endroit agréable pour se baigner et profiter du cadre, mais pas vraiment adapté au snorkeling.",
-        rating: 1,
-        species: [],
-        images: []
-      },
-      {
-        name: "Plage de Petit-Havre, Sainte-Anne",
-        coords: [16.2090, -61.4270],      
-        desc: "Petit coin sauvage et convivial. Un lieu apprécié pour son côté sauvage, les barbecues en bord de mer et un peu de surf selon les conditions. Quelques zones plus reculées offrent une visibilité correcte et permettent d’observer quelques poissons, mais cela reste un petit spot de snorkeling, avec une richesse sous-marine limitée. Un endroit agréable pour profiter de l’ambiance, plus que pour une exploration approfondie.",
+        name: {
+          fr: "Plage de Bas-Du-Fort, Le Gosier",
+          en: "Bas-du-Fort beach, Le Gosier"
+        },
+        desc: {
+          fr: "Jolie plage touristique mais snorkeling limité. Une très belle plage, petite et souvent fréquentée par les visiteurs. L’eau y est bien protégée, mais la visibilité reste faible et la biodiversité observée est assez limitée. Un endroit agréable pour se baigner et profiter du cadre, mais pas vraiment adapté au snorkeling.",
+          en: "Pretty tourist beach but limited snorkeling. A lovely, small and often busy beach. The water is well protected, but visibility remains low and biodiversity limited. A nice place for swimming and enjoying the setting, but not really suitable for snorkeling."
+        },
+        coords: [16.2138, -61.5240],
         rating: 2,
         species: [],
         images: []
       },
       {
-        name: "Anse Sainte-Marguerite, Le Moule",
-        coords: [16.3893, -61.4049],      
-        desc: "Zone partiellement protégée des vagues, mais qui devient vite impraticable voire dangereuse lorsque la houle est forte (ce qui est fréquent sur cette côte). Plage assez rocheuse, relativement polluée et peu adaptée au snorkeling. C’est surtout un très bel endroit pour se promener plutôt que pour observer les fonds marins.",
+        name: {
+          fr: "Plage de Petit-Havre, Sainte-Anne",
+          en: "Petit-Havre beach, Sainte-Anne"
+        },
+        desc: {
+          fr: "Petit coin sauvage et convivial. Un lieu apprécié pour son côté sauvage, les barbecues en bord de mer et un peu de surf selon les conditions. Quelques zones plus reculées offrent une visibilité correcte et permettent d’observer quelques poissons, mais cela reste un petit spot de snorkeling, avec une richesse sous-marine limitée. Un endroit agréable pour profiter de l’ambiance, plus que pour une exploration approfondie.",
+          en: "A small wild and friendly spot. A place appreciated for its natural feel, seaside barbecues and occasional surfing depending on conditions. Some more remote areas offer decent visibility and a few fish, but it remains a small snorkeling site with limited underwater life. A pleasant spot for the atmosphere rather than for in-depth exploration."
+        },
+        coords: [16.2090, -61.4270],
+        rating: 2,
+        species: [],
+        images: []
+      },
+      {
+        name: {
+          fr: "Anse Sainte-Marguerite, Le Moule",
+          en: "Sainte-Marguerite cove, Le Moule"
+        },
+        desc: {
+          fr: "Zone partiellement protégée des vagues, mais qui devient vite impraticable voire dangereuse lorsque la houle est forte (ce qui est fréquent sur cette côte). Plage assez rocheuse, relativement polluée et peu adaptée au snorkeling. C’est surtout un très bel endroit pour se promener plutôt que pour observer les fonds marins.",
+          en: "A partially wave-sheltered zone, but it quickly becomes impractical or even dangerous when the swell is strong (which is frequent on this coast). The beach is quite rocky, relatively polluted and poorly suited for snorkeling. It is mainly a beautiful place for walking rather than for exploring the seabed."
+        },
+        coords: [16.3893, -61.4049],
         rating: 1,
         species: [],
         images: []
       },
       {
-        name: "Anse à sable, Bouillante",
-        coords: [16.1453, -61.7789],      
-        desc: "Un spot sympathique situé non loin de la réserve Cousteau. Pour profiter pleinement de la biodiversité, il faut savoir descendre un peu en apnée ou longer la côte, où l’on découvre de jolies zones rocheuses et quelques espèces intéressantes. L’ensemble reste globalement joli et agréable, idéal pour une petite exploration tranquille.",
+        name: {
+          fr: "Anse à Sable, Bouillante",
+          en: "Anse à Sable, Bouillante"
+        },
+        desc: {
+          fr: "Un spot sympathique situé non loin de la réserve Cousteau. Pour profiter pleinement de la biodiversité, il faut savoir descendre un peu en apnée ou longer la côte, où l’on découvre de jolies zones rocheuses et quelques espèces intéressantes. L’ensemble reste globalement joli et agréable, idéal pour une petite exploration tranquille.",
+          en: "A pleasant spot located not far from the Cousteau Reserve. To fully enjoy the biodiversity, you need to dive down a little or follow the coastline, where you’ll find lovely rocky areas and interesting species. Overall, it’s a nice place for a quiet exploration."
+        },
+        coords: [16.1453, -61.7789],
         rating: 3,
         species: [],
         images: []
       },
       {
-        name: "Pointe de l'Ermitage, Bouillante",
-        coords: [16.1260, -61.7752],      
-        desc: "Le snorkeling y est intéressant, mais la houle peut rapidement pousser vers les rochers, rendant la zone potentiellement dangereuse. Ce n’est pas le meilleur spot de l’île, mais il reste agréable et facilement accessible en bateau. À privilégier par mer calme et avec une bonne vigilance.",
+        name: {
+          fr: "Pointe de l’Ermitage, Bouillante",
+          en: "Hermitage point, Bouillante"
+        },
+        desc: {
+          fr: "Le snorkeling y est intéressant, mais la houle peut rapidement pousser vers les rochers, rendant la zone potentiellement dangereuse. Ce n’est pas le meilleur spot de l’île, mais il reste agréable et facilement accessible en bateau. À privilégier par mer calme et avec une bonne vigilance.",
+          en: "Snorkeling here is interesting, but the swell can quickly push you toward the rocks, making the area potentially dangerous. It’s not the best spot on the island, but it is still pleasant and easily accessible by boat. Best visited in calm seas and with good vigilance."
+        },
+        coords: [16.1260, -61.7752],
         rating: 2,
         species: [],
         images: []
@@ -695,6 +1097,126 @@
       changeImage(lightboxSpotIndex, direction);  // réutilise la logique existante
     }
 
+    // === Générer la partie images (slider) de la popup, indépendant de la langue ===
+    function generateImagesHtml(spot, index) {
+      if (!spot.images || spot.images.length === 0) return "";
+      return `
+        <div class="slider">
+          <button type="button"
+                  class="slider-btn"
+                  onclick="changeImage(${index}, -1)">‹</button>
+          <div class="slider-img-wrapper"
+               onclick="openLightbox(${index})">
+            <img id="slider-img-${index}"
+                  src="${spot.images[0]}"
+                  alt="${spot.name[currentLang] || spot.name}">
+          </div>
+          <button type="button"
+                  class="slider-btn"
+                  onclick="changeImage(${index}, 1)">›</button>
+        </div>
+        <div class="slider-counter"
+              id="slider-counter-${index}">
+              1 / ${spot.images.length}
+        </div>
+      `;
+    }
+
+    // === Appliquer la langue à l’interface ===
+    function applyLanguage() {
+      const t = i18n[currentLang];
+
+      // 1) Mettre à jour le texte du bouton "Filtres"
+      const filtersTitleSpan = document.querySelector('#filters-toggle span');
+      if (filtersTitleSpan) {
+        filtersTitleSpan.textContent = t.filtersTitle;
+      }
+
+      // === 🔥 Mise à jour des popups (titres + descriptions) ===
+      spots.forEach((spot, index) => {
+        const marker = spot._marker;
+
+        const newPopupContent = `
+          <b>${spot.name[currentLang]}</b><br>
+          ${spot.desc[currentLang]}<br>
+          Note : ${getStars(spot.rating)}<br><br>
+          ${generateImagesHtml(spot, index)}
+        `;
+
+        marker.bindPopup(newPopupContent);
+        marker.options.title = spot.name[currentLang]; // important pour la recherche
+      });
+
+      // Texte du bouton "Changer de langue" dans le menu
+      const langBtn = document.querySelector('.lang-button');
+        if (langBtn) {
+          langBtn.textContent = `🌐 ${t.changeLanguage}`;
+        }
+      
+      // === 🔥 Mise à jour des fonds de carte ===
+      // On retire l’ancien contrôle
+      if (layersControl) map.removeControl(layersControl);
+
+      // On recrée baseLayers avec les bons noms
+      baseLayers = {};
+      baseLayers[t.mapLayers.satellite] = satellite;
+      baseLayers[t.mapLayers.osm] = osm;
+      baseLayers[t.mapLayers.relief] = relief;
+
+      layersControl = L.control.layers(baseLayers, null, {
+        collapsed: false
+      }).addTo(map);
+
+      // On replace le control dans le menu
+      const layersContainer = layersControl.getContainer();
+      document.getElementById('menu-baselayers').innerHTML = "";
+      document.getElementById('menu-baselayers').appendChild(layersContainer);
+
+      // 2) Mettre à jour les labels des filtres
+      const filtersContent = document.getElementById('filters-content');
+      if (filtersContent) {
+        const ratingCheckboxes = filtersContent.querySelectorAll('input[data-rating]');
+        ratingCheckboxes.forEach(cb => {
+          const rating = Number(cb.dataset.rating);
+          // le texte du label est dans le nœud texte après l’input
+          cb.parentElement.lastChild.textContent = ' ' + t.ratingTexts[rating];
+        });
+
+        const speciesCheckboxes = filtersContent.querySelectorAll('input[data-species]');
+        speciesCheckboxes.forEach(cb => {
+          const sp = cb.dataset.species;
+          cb.parentElement.lastChild.textContent = ' ' + t.species[sp];
+        });
+      }
+
+      // 3) Recréer la légende dans la bonne langue
+      if (legendControl) {
+        map.removeControl(legendControl);
+      }
+      legendControl = L.control({ position: 'topright' });
+      legendControl.onAdd = function () {
+        const div = L.DomUtil.create('div', 'legend');
+        const ratings = [5, 4, 3, 2, 1];
+
+        div.innerHTML += "<b>" + t.legendTitle + "</b><br>";
+
+        ratings.forEach(r => {
+          div.innerHTML += `
+            <i style="background:${getColor(r)};"></i>
+            ${getStars(r)}<br>
+          `;
+        });
+
+        return div;
+      };
+      legendControl.addTo(map);
+
+      // 4) Mettre à jour le placeholder de recherche
+      if (searchControl && searchControl._input) {
+        searchControl._input.placeholder = t.searchPlaceholder;
+      }
+    }
+    
     spots.forEach((spot, index) => {
 
       let imagesHtml = "";
@@ -722,10 +1244,10 @@
     }
 
       const popupContent = `
-        <b>${spot.name}</b><br>
-        ${spot.desc}<br>
+        <b>${spot.name[currentLang]}</b><br>
+        ${spot.desc[currentLang]}<br>
         Note : ${getStars(spot.rating)}<br><br>
-        ${imagesHtml}
+        ${generateImagesHtml(spot, index)}
       `;
 
       const icon = L.divIcon({
@@ -737,7 +1259,7 @@
       // 👉 on crée le marker, avec un "title" = nom du spot (utilisé par le plugin de recherche)
       const marker = L.marker(spot.coords, {
         icon,
-        title: spot.name
+        title: spot.name[currentLang]
       }).bindPopup(popupContent);
 
       // 👉 on garde les infos sur le marker pour les filtres plus tard
@@ -751,47 +1273,32 @@
     /* ----------------------------------------------------------
        8. Légende étoiles + couleurs
     ----------------------------------------------------------- */
-    const legend = L.control({ position: 'topright' });
-
-    legend.onAdd = function () {
-      const div = L.DomUtil.create('div', 'legend');
-      const ratings = [5, 4, 3, 2, 1];
-
-      div.innerHTML += "<b>Qualité du spot</b><br>";
-
-      ratings.forEach(r => {
-        div.innerHTML += `
-          <i style="background:${getColor(r)};"></i>
-          ${getStars(r)}<br>
-        `;
-      });
-
-      return div;
-    };
-
-    legend.addTo(map);
+    
 
     // ----------------------------------------------------------
     // 9. Contrôle de recherche des spots
     // ----------------------------------------------------------
-    const searchControl = new L.Control.Search({
-      layer: markersLayer,              // on cherche dans ce layer
-      propertyName: 'title',            // ce qu’on cherche = option "title" du marker
-      marker: false,                    // ne pas ajouter un marker rouge par défaut
+    searchControl = new L.Control.Search({
+      layer: markersLayer,
+      propertyName: 'title',
+      marker: false,
       initial: false,
       zoom: 14,
       textPlaceholder: 'Rechercher un spot...',
-      collapsed: false                  // si tu veux qu’il soit ouvert par défaut
+      collapsed: false,
+      position: 'topleft'
     });
 
-    // Quand un spot est trouvé, on ouvre sa popup
     searchControl.on('search:locationfound', function (e) {
       if (e.layer._popup) {
         e.layer.openPopup();
       }
     });
 
+    // On l’ajoute à la carte…
     map.addControl(searchControl);
+
+    applyLanguage();
 
   // --- Auto-défilement des images + gestion UI + recentrage fixe ---
     map.on('popupopen', function (e) {
