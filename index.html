@@ -528,7 +528,12 @@
           tortue: "Tortues 🐢",
           requin: "Requins 🦈"
         },
-        searchPlaceholder: "Rechercher un spot..."
+        searchPlaceholder: "Rechercher un spot...",
+        mapLayers: {
+          satellite: "Vue Satellite",
+          osm: "Carte classique (OSM)",
+          relief: "Relief / Topographie"
+        },
       },
       en: {
         legendTitle: "Spot quality",
@@ -544,7 +549,13 @@
           tortue: "Turtles 🐢",
           requin: "Sharks 🦈"
         },
-        searchPlaceholder: "Search a spot..."
+        searchPlaceholder: "Search a spot...",
+        mapLayers: {
+          satellite: "Satellite View",
+          osm: "Classic map (OSM)",
+          relief: "Relief / Topographic"
+        },
+
       }
     };
 
@@ -629,11 +640,7 @@
     /* ----------------------------------------------------------
        4. Contrôle permettant de changer de fond de carte
     ----------------------------------------------------------- */
-    const baseLayers = {
-      "Satellite": satellite,
-      "Classique (OSM)": osm,
-      "Relief": relief
-    };
+    let baseLayers = {};
 
     const layersControl = L.control.layers(baseLayers, null, {
       collapsed: false
@@ -1109,6 +1116,25 @@
       if (filtersTitleSpan) {
         filtersTitleSpan.textContent = t.filtersTitle;
       }
+
+      // === 🔥 Mise à jour des fonds de carte ===
+      // On retire l’ancien contrôle
+      if (layersControl) map.removeControl(layersControl);
+
+      // On recrée baseLayers avec les bons noms
+      baseLayers = {};
+      baseLayers[t.mapLayers.satellite] = satellite;
+      baseLayers[t.mapLayers.osm] = osm;
+      baseLayers[t.mapLayers.relief] = relief;
+
+      layersControl = L.control.layers(baseLayers, null, {
+        collapsed: false
+      }).addTo(map);
+
+      // On replace le control dans le menu
+      const layersContainer = layersControl.getContainer();
+      document.getElementById('menu-baselayers').innerHTML = "";
+      document.getElementById('menu-baselayers').appendChild(layersContainer);
 
       // 2) Mettre à jour les labels des filtres
       const filtersContent = document.getElementById('filters-content');
