@@ -484,7 +484,7 @@
     const i18n = {
       fr: {
         legendTitle: "Qualité du spot",
-        filtersTitle: "Filtres",
+        filtersTitle: "Menu",
         ratingTexts: {
           5: "5 ★ Excellent",
           4: "4 ★ Très bien",
@@ -500,7 +500,7 @@
       },
       en: {
         legendTitle: "Spot quality",
-        filtersTitle: "Filters",
+        filtersTitle: "Menu",
         ratingTexts: {
           5: "5 ★ Excellent",
           4: "4 ★ Very good",
@@ -603,10 +603,13 @@
       "Relief": relief
     };
 
-    L.control.layers(baseLayers, null, {
+    const layersControl = L.control.layers(baseLayers, null, {
       collapsed: false
-    }).addTo(document.getElementById('menu-baselayers'));
+    }).addTo(map);
 
+    // On déplace son container dans le menu
+    const layersContainer = layersControl.getContainer();
+    document.getElementById('menu-baselayers').appendChild(layersContainer);
 
     /* ----------------------------------------------------------
        5. Fonctions utilitaires pour couleurs + étoiles
@@ -1176,25 +1179,7 @@
     /* ----------------------------------------------------------
        8. Légende étoiles + couleurs
     ----------------------------------------------------------- */
-    const legend = L.control({ position: 'topright' });
-
-    legend.onAdd = function () {
-      const div = L.DomUtil.create('div', 'legend');
-      const ratings = [5, 4, 3, 2, 1];
-
-      div.innerHTML += "<b>Qualité du spot</b><br>";
-
-      ratings.forEach(r => {
-        div.innerHTML += `
-          <i style="background:${getColor(r)};"></i>
-          ${getStars(r)}<br>
-        `;
-      });
-
-      return div;
-    };
-
-    legend.addTo(map);
+    
 
     // ----------------------------------------------------------
     // 9. Contrôle de recherche des spots
@@ -1209,14 +1194,20 @@
       collapsed: false
     });
 
-    // Quand un spot est trouvé, on ouvre sa popup
     searchControl.on('search:locationfound', function (e) {
       if (e.layer._popup) {
         e.layer.openPopup();
       }
     });
 
-    searchControl.addTo(document.getElementById('menu-search-container'));
+    // On l’ajoute à la carte…
+    map.addControl(searchControl);
+
+    // …puis on déplace son container dans le menu
+    const searchContainer = searchControl.getContainer();
+    document.getElementById('menu-search-container').appendChild(searchContainer);
+
+    applyLanguage();
 
   // --- Auto-défilement des images + gestion UI + recentrage fixe ---
     map.on('popupopen', function (e) {
