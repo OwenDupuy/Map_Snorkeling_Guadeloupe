@@ -415,7 +415,19 @@
     }
 
     @media (max-width: 768px) {
-
+      .leaflet-popup-content {
+        font-size: 0.85em !important;   /* texte plus petit */
+        line-height: 1.3em;
+      }
+    
+      .leaflet-popup {
+        width: 220px !important;        /* popup plus étroite */
+        max-width: 220px !important;
+      }
+    
+      .leaflet-popup-content-wrapper {
+        padding: 8px 10px !important;   /* moins de marges internes */
+      }
       /* 1. Cacher le zoom sur mobile */
       .leaflet-control-zoom {
         display: none !important;
@@ -432,6 +444,7 @@
       #insta-button img {
         width: 60px;
         lenght: 60px;
+        object-fit: cover;
       }
 
       /* 2. Réduire les marges et resserrer les contrôles en haut à gauche */
