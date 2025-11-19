@@ -460,8 +460,47 @@
 
   <script>
 
-    // Langue courante (par défaut français)
+    // === Choix de langue & textes FR/EN ===
     let currentLang = 'fr';
+
+    const i18n = {
+      fr: {
+        legendTitle: "Qualité du spot",
+        filtersTitle: "Filtres",
+        ratingTexts: {
+          5: "5 ★ Excellent",
+          4: "4 ★ Très bien",
+          3: "3 ★ Bien",
+          2: "2 ★ Neutre",
+          1: "1 ★ Mauvais"
+        },
+        species: {
+          tortue: "Tortues 🐢",
+          requin: "Requins 🦈"
+        },
+        searchPlaceholder: "Rechercher un spot..."
+      },
+      en: {
+        legendTitle: "Spot quality",
+        filtersTitle: "Filters",
+        ratingTexts: {
+          5: "5 ★ Excellent",
+          4: "4 ★ Very good",
+          3: "3 ★ Good",
+          2: "2 ★ Average",
+          1: "1 ★ Poor"
+        },
+        species: {
+          tortue: "Turtles 🐢",
+          requin: "Sharks 🦈"
+        },
+        searchPlaceholder: "Search a spot..."
+      }
+    };
+
+    // Ces variables serviront à manipuler la légende et la barre de recherche
+    let legendControl;
+    let searchControl;
 
     // À l'ouverture de la page, on affiche la modale et on floute la carte
     document.body.classList.add('lang-modal-open');
@@ -783,138 +822,138 @@
           "images/plage_antigues3.jpg","images/plage_antigues4.jpg"
         ]
       },
-  {
-    name: {
-      fr: "Anse des Rochers, Saint-François",
-      en: "Anse des Rochers, Saint-François"
-    },
-    desc: {
-      fr: "Plage sécurisée et idéale pour les débutants Un site accessible via une résidence / centre de vacances, avec une très belle plage protégée des vagues et parfaitement adaptée au snorkeling calme. La zone abrite surtout des espèces juvéniles, qui trouvent refuge dans les herbiers et les petits amas de roches dispersés près du rivage. Un spot agréable pour une sortie tranquille et sécurisée.",
-      en: "A safe beach ideal for beginners. A site accessible through a residence or holiday complex, featuring a beautiful wave-protected beach perfectly suited for calm snorkeling. The zone hosts mostly juvenile species that take refuge in seagrass beds and small rock clusters near the shore. A pleasant spot for a quiet and safe outing."
-    },
-    coords: [16.2417, -61.3064],
-    rating: 2,
-    species: [],
-    images: []
-  },
-  {
-    name: {
-      fr: "Les Trois Pointes, Vieux-Fort",
-      en: "Three Points, Vieux-Fort"
-    },
-    desc: {
-      fr: "Un lieu riche en couleurs et en biodiversité, où les nuances de bleu sont absolument magnifiques et où de nombreuses espèces évoluent autour de vous. Il peut y avoir un peu de mouvement d’eau, donc prudence, mais l’endroit reste un spot reculé, paisible et parfait pour une exploration en immersion totale.",
-      en: "A place rich in color and biodiversity, with stunning shades of blue and many species surrounding you. There can be some water movement, so caution is advised, but it remains a secluded, peaceful spot perfect for full-immersion exploration."
-    },
-    coords: [15.9556, -61.7105],
-    rating: 4,
-    species: ["tortue"],
-    images: [
-      "images/les_trois_pointes1.JPG","images/les_trois_pointes2.jpg","images/les_trois_pointes3.jpg"
-    ]
-  },
-  {
-    name: {
-      fr: "Morphy, Pointe-Noire",
-      en: "Morphy, Pointe-Noire"
-    },
-    desc: {
-      fr: "Un lieu légèrement exposé à la houle de la mer des Caraïbes, mais qui reste un excellent spot de plongée comme de snorkeling. Les reliefs sous-marins y sont particulièrement variés, avec une belle diversité de couleurs, d’espèces et de structures rocheuses. La plage est constituée de galets et la pente descend doucement jusqu’à environ 30 mètres de profondeur, offrant un décor grandiose même depuis la surface. C’est tout simplement l’un des sites les plus beaux et les plus colorés de la région, un incontournable pour les amateurs de fonds marins vibrants.",
-      en: "A spot slightly exposed to Caribbean swell, yet still an excellent place for diving and snorkeling. The underwater reliefs are highly varied, with beautiful colors, species, and rocky structures. The beach is made of pebbles, and the slope drops gradually to around 30 meters, offering an impressive scenery even from the surface. One of the most beautiful and colorful sites in the region, a must for lovers of vibrant seascapes."
-    },
-    coords: [16.2527, -61.8043],
-    rating: 4,
-    species: ["tortue"],
-    images: [
-      "images/morphy1.JPG","images/morphy2.JPG","images/morphy3.JPG",
-      "images/morphy4.JPG","images/morphy5.JPG","images/morphy6.JPG"
-    ]
-  },
-  {
-    name: {
-      fr: "Plage de la Résidence Départementale, Le Gosier",
-      en: "Départementale residence beach, Le Gosier"
-    },
-    desc: {
-      fr: "Petite plage située au pied du fort. L’endroit est charmant et un peu escarpé, mais la visibilité est très mauvaise : les vagues remuent constamment le sable, ce qui empêche toute observation sous-marine.",
-      en: "A small beach located at the foot of the fort. The place is charming but visibility is very poor: waves constantly stir the sand, making underwater observation impossible."
-    },
-    coords: [16.2147, -61.5160],
-    rating: 1,
-    species: [],
-    images: []
-  },
-  {
-    name: {
-      fr: "Plage de Bas-Du-Fort, Le Gosier",
-      en: "Bas-du-Fort beach, Le Gosier"
-    },
-    desc: {
-      fr: "Jolie plage touristique mais snorkeling limité. Une très belle plage, petite et souvent fréquentée par les visiteurs. L’eau y est bien protégée, mais la visibilité reste faible et la biodiversité observée est assez limitée. Un endroit agréable pour se baigner et profiter du cadre, mais pas vraiment adapté au snorkeling.",
-      en: "Pretty tourist beach but limited snorkeling. A lovely, small and often busy beach. The water is well protected, but visibility remains low and biodiversity limited. A nice place for swimming and enjoying the setting, but not really suitable for snorkeling."
-    },
-    coords: [16.2138, -61.5240],
-    rating: 2,
-    species: [],
-    images: []
-  },
-  {
-    name: {
-      fr: "Plage de Petit-Havre, Sainte-Anne",
-      en: "Petit-Havre beach, Sainte-Anne"
-    },
-    desc: {
-      fr: "Petit coin sauvage et convivial. Un lieu apprécié pour son côté sauvage, les barbecues en bord de mer et un peu de surf selon les conditions. Quelques zones plus reculées offrent une visibilité correcte et permettent d’observer quelques poissons, mais cela reste un petit spot de snorkeling, avec une richesse sous-marine limitée. Un endroit agréable pour profiter de l’ambiance, plus que pour une exploration approfondie.",
-      en: "A small wild and friendly spot. A place appreciated for its natural feel, seaside barbecues and occasional surfing depending on conditions. Some more remote areas offer decent visibility and a few fish, but it remains a small snorkeling site with limited underwater life. A pleasant spot for the atmosphere rather than for in-depth exploration."
-    },
-    coords: [16.2090, -61.4270],
-    rating: 2,
-    species: [],
-    images: []
-  },
-  {
-    name: {
-      fr: "Anse Sainte-Marguerite, Le Moule",
-      en: "Sainte-Marguerite cove, Le Moule"
-    },
-    desc: {
-      fr: "Zone partiellement protégée des vagues, mais qui devient vite impraticable voire dangereuse lorsque la houle est forte (ce qui est fréquent sur cette côte). Plage assez rocheuse, relativement polluée et peu adaptée au snorkeling. C’est surtout un très bel endroit pour se promener plutôt que pour observer les fonds marins.",
-      en: "A partially wave-sheltered zone, but it quickly becomes impractical or even dangerous when the swell is strong (which is frequent on this coast). The beach is quite rocky, relatively polluted and poorly suited for snorkeling. It is mainly a beautiful place for walking rather than for exploring the seabed."
-    },
-    coords: [16.3893, -61.4049],
-    rating: 1,
-    species: [],
-    images: []
-  },
-  {
-    name: {
-      fr: "Anse à Sable, Bouillante",
-      en: "Anse à Sable, Bouillante"
-    },
-    desc: {
-      fr: "Un spot sympathique situé non loin de la réserve Cousteau. Pour profiter pleinement de la biodiversité, il faut savoir descendre un peu en apnée ou longer la côte, où l’on découvre de jolies zones rocheuses et quelques espèces intéressantes. L’ensemble reste globalement joli et agréable, idéal pour une petite exploration tranquille.",
-      en: "A pleasant spot located not far from the Cousteau Reserve. To fully enjoy the biodiversity, you need to dive down a little or follow the coastline, where you’ll find lovely rocky areas and interesting species. Overall, it’s a nice place for a quiet exploration."
-    },
-    coords: [16.1453, -61.7789],
-    rating: 3,
-    species: [],
-    images: []
-  },
-  {
-    name: {
-      fr: "Pointe de l’Ermitage, Bouillante",
-      en: "Hermitage point, Bouillante"
-    },
-    desc: {
-      fr: "Le snorkeling y est intéressant, mais la houle peut rapidement pousser vers les rochers, rendant la zone potentiellement dangereuse. Ce n’est pas le meilleur spot de l’île, mais il reste agréable et facilement accessible en bateau. À privilégier par mer calme et avec une bonne vigilance.",
-      en: "Snorkeling here is interesting, but the swell can quickly push you toward the rocks, making the area potentially dangerous. It’s not the best spot on the island, but it is still pleasant and easily accessible by boat. Best visited in calm seas and with good vigilance."
-    },
-    coords: [16.1260, -61.7752],
-    rating: 2,
-    species: [],
-    images: []
-  }
-];
+      {
+        name: {
+          fr: "Anse des Rochers, Saint-François",
+          en: "Anse des Rochers, Saint-François"
+        },
+        desc: {
+          fr: "Plage sécurisée et idéale pour les débutants Un site accessible via une résidence / centre de vacances, avec une très belle plage protégée des vagues et parfaitement adaptée au snorkeling calme. La zone abrite surtout des espèces juvéniles, qui trouvent refuge dans les herbiers et les petits amas de roches dispersés près du rivage. Un spot agréable pour une sortie tranquille et sécurisée.",
+          en: "A safe beach ideal for beginners. A site accessible through a residence or holiday complex, featuring a beautiful wave-protected beach perfectly suited for calm snorkeling. The zone hosts mostly juvenile species that take refuge in seagrass beds and small rock clusters near the shore. A pleasant spot for a quiet and safe outing."
+        },
+        coords: [16.2417, -61.3064],
+        rating: 2,
+        species: [],
+        images: []
+      },
+      {
+        name: {
+          fr: "Les Trois Pointes, Vieux-Fort",
+          en: "Three Points, Vieux-Fort"
+        },
+        desc: {
+          fr: "Un lieu riche en couleurs et en biodiversité, où les nuances de bleu sont absolument magnifiques et où de nombreuses espèces évoluent autour de vous. Il peut y avoir un peu de mouvement d’eau, donc prudence, mais l’endroit reste un spot reculé, paisible et parfait pour une exploration en immersion totale.",
+          en: "A place rich in color and biodiversity, with stunning shades of blue and many species surrounding you. There can be some water movement, so caution is advised, but it remains a secluded, peaceful spot perfect for full-immersion exploration."
+        },
+        coords: [15.9556, -61.7105],
+        rating: 4,
+        species: ["tortue"],
+        images: [
+          "images/les_trois_pointes1.JPG","images/les_trois_pointes2.jpg","images/les_trois_pointes3.jpg"
+        ]
+      },
+      {
+        name: {
+          fr: "Morphy, Pointe-Noire",
+          en: "Morphy, Pointe-Noire"
+        },
+        desc: {
+          fr: "Un lieu légèrement exposé à la houle de la mer des Caraïbes, mais qui reste un excellent spot de plongée comme de snorkeling. Les reliefs sous-marins y sont particulièrement variés, avec une belle diversité de couleurs, d’espèces et de structures rocheuses. La plage est constituée de galets et la pente descend doucement jusqu’à environ 30 mètres de profondeur, offrant un décor grandiose même depuis la surface. C’est tout simplement l’un des sites les plus beaux et les plus colorés de la région, un incontournable pour les amateurs de fonds marins vibrants.",
+          en: "A spot slightly exposed to Caribbean swell, yet still an excellent place for diving and snorkeling. The underwater reliefs are highly varied, with beautiful colors, species, and rocky structures. The beach is made of pebbles, and the slope drops gradually to around 30 meters, offering an impressive scenery even from the surface. One of the most beautiful and colorful sites in the region, a must for lovers of vibrant seascapes."
+        },
+        coords: [16.2527, -61.8043],
+        rating: 4,
+        species: ["tortue"],
+        images: [
+          "images/morphy1.JPG","images/morphy2.JPG","images/morphy3.JPG",
+          "images/morphy4.JPG","images/morphy5.JPG","images/morphy6.JPG"
+        ]
+      },
+      {
+        name: {
+          fr: "Plage de la Résidence Départementale, Le Gosier",
+          en: "Départementale residence beach, Le Gosier"
+        },
+        desc: {
+          fr: "Petite plage située au pied du fort. L’endroit est charmant et un peu escarpé, mais la visibilité est très mauvaise : les vagues remuent constamment le sable, ce qui empêche toute observation sous-marine.",
+          en: "A small beach located at the foot of the fort. The place is charming but visibility is very poor: waves constantly stir the sand, making underwater observation impossible."
+        },
+        coords: [16.2147, -61.5160],
+        rating: 1,
+        species: [],
+        images: []
+      },
+      {
+        name: {
+          fr: "Plage de Bas-Du-Fort, Le Gosier",
+          en: "Bas-du-Fort beach, Le Gosier"
+        },
+        desc: {
+          fr: "Jolie plage touristique mais snorkeling limité. Une très belle plage, petite et souvent fréquentée par les visiteurs. L’eau y est bien protégée, mais la visibilité reste faible et la biodiversité observée est assez limitée. Un endroit agréable pour se baigner et profiter du cadre, mais pas vraiment adapté au snorkeling.",
+          en: "Pretty tourist beach but limited snorkeling. A lovely, small and often busy beach. The water is well protected, but visibility remains low and biodiversity limited. A nice place for swimming and enjoying the setting, but not really suitable for snorkeling."
+        },
+        coords: [16.2138, -61.5240],
+        rating: 2,
+        species: [],
+        images: []
+      },
+      {
+        name: {
+          fr: "Plage de Petit-Havre, Sainte-Anne",
+          en: "Petit-Havre beach, Sainte-Anne"
+        },
+        desc: {
+          fr: "Petit coin sauvage et convivial. Un lieu apprécié pour son côté sauvage, les barbecues en bord de mer et un peu de surf selon les conditions. Quelques zones plus reculées offrent une visibilité correcte et permettent d’observer quelques poissons, mais cela reste un petit spot de snorkeling, avec une richesse sous-marine limitée. Un endroit agréable pour profiter de l’ambiance, plus que pour une exploration approfondie.",
+          en: "A small wild and friendly spot. A place appreciated for its natural feel, seaside barbecues and occasional surfing depending on conditions. Some more remote areas offer decent visibility and a few fish, but it remains a small snorkeling site with limited underwater life. A pleasant spot for the atmosphere rather than for in-depth exploration."
+        },
+        coords: [16.2090, -61.4270],
+        rating: 2,
+        species: [],
+        images: []
+      },
+      {
+        name: {
+          fr: "Anse Sainte-Marguerite, Le Moule",
+          en: "Sainte-Marguerite cove, Le Moule"
+        },
+        desc: {
+          fr: "Zone partiellement protégée des vagues, mais qui devient vite impraticable voire dangereuse lorsque la houle est forte (ce qui est fréquent sur cette côte). Plage assez rocheuse, relativement polluée et peu adaptée au snorkeling. C’est surtout un très bel endroit pour se promener plutôt que pour observer les fonds marins.",
+          en: "A partially wave-sheltered zone, but it quickly becomes impractical or even dangerous when the swell is strong (which is frequent on this coast). The beach is quite rocky, relatively polluted and poorly suited for snorkeling. It is mainly a beautiful place for walking rather than for exploring the seabed."
+        },
+        coords: [16.3893, -61.4049],
+        rating: 1,
+        species: [],
+        images: []
+      },
+      {
+        name: {
+          fr: "Anse à Sable, Bouillante",
+          en: "Anse à Sable, Bouillante"
+        },
+        desc: {
+          fr: "Un spot sympathique situé non loin de la réserve Cousteau. Pour profiter pleinement de la biodiversité, il faut savoir descendre un peu en apnée ou longer la côte, où l’on découvre de jolies zones rocheuses et quelques espèces intéressantes. L’ensemble reste globalement joli et agréable, idéal pour une petite exploration tranquille.",
+          en: "A pleasant spot located not far from the Cousteau Reserve. To fully enjoy the biodiversity, you need to dive down a little or follow the coastline, where you’ll find lovely rocky areas and interesting species. Overall, it’s a nice place for a quiet exploration."
+        },
+        coords: [16.1453, -61.7789],
+        rating: 3,
+        species: [],
+        images: []
+      },
+      {
+        name: {
+          fr: "Pointe de l’Ermitage, Bouillante",
+          en: "Hermitage point, Bouillante"
+        },
+        desc: {
+          fr: "Le snorkeling y est intéressant, mais la houle peut rapidement pousser vers les rochers, rendant la zone potentiellement dangereuse. Ce n’est pas le meilleur spot de l’île, mais il reste agréable et facilement accessible en bateau. À privilégier par mer calme et avec une bonne vigilance.",
+          en: "Snorkeling here is interesting, but the swell can quickly push you toward the rocks, making the area potentially dangerous. It’s not the best spot on the island, but it is still pleasant and easily accessible by boat. Best visited in calm seas and with good vigilance."
+        },
+        coords: [16.1260, -61.7752],
+        rating: 2,
+        species: [],
+        images: []
+      }
+    ];
 
     ];
 
@@ -978,6 +1017,86 @@
       changeImage(lightboxSpotIndex, direction);  // réutilise la logique existante
     }
 
+    // === Générer la partie images (slider) de la popup, indépendant de la langue ===
+    function generateImagesHtml(spot, index) {
+      if (!spot.images || spot.images.length === 0) return "";
+      return `
+        <div class="slider">
+          <button type="button"
+                  class="slider-btn"
+                  onclick="changeImage(${index}, -1)">‹</button>
+          <div class="slider-img-wrapper"
+               onclick="openLightbox(${index})">
+            <img id="slider-img-${index}"
+                  src="${spot.images[0]}"
+                  alt="${spot.name[currentLang] || spot.name}">
+          </div>
+          <button type="button"
+                  class="slider-btn"
+                  onclick="changeImage(${index}, 1)">›</button>
+        </div>
+        <div class="slider-counter"
+              id="slider-counter-${index}">
+              1 / ${spot.images.length}
+        </div>
+      `;
+    }
+
+    // === Appliquer la langue à l’interface ===
+    function applyLanguage() {
+      const t = i18n[currentLang];
+
+      // 1) Mettre à jour le texte du bouton "Filtres"
+      const filtersTitleSpan = document.querySelector('#filters-toggle span');
+      if (filtersTitleSpan) {
+        filtersTitleSpan.textContent = t.filtersTitle;
+      }
+
+      // 2) Mettre à jour les labels des filtres
+      const filtersContent = document.getElementById('filters-content');
+      if (filtersContent) {
+        const ratingCheckboxes = filtersContent.querySelectorAll('input[data-rating]');
+        ratingCheckboxes.forEach(cb => {
+          const rating = Number(cb.dataset.rating);
+          // le texte du label est dans le nœud texte après l’input
+          cb.parentElement.lastChild.textContent = ' ' + t.ratingTexts[rating];
+        });
+
+        const speciesCheckboxes = filtersContent.querySelectorAll('input[data-species]');
+        speciesCheckboxes.forEach(cb => {
+          const sp = cb.dataset.species;
+          cb.parentElement.lastChild.textContent = ' ' + t.species[sp];
+        });
+      }
+
+      // 3) Recréer la légende dans la bonne langue
+      if (legendControl) {
+        map.removeControl(legendControl);
+      }
+      legendControl = L.control({ position: 'topright' });
+      legendControl.onAdd = function () {
+        const div = L.DomUtil.create('div', 'legend');
+        const ratings = [5, 4, 3, 2, 1];
+
+        div.innerHTML += "<b>" + t.legendTitle + "</b><br>";
+
+        ratings.forEach(r => {
+          div.innerHTML += `
+            <i style="background:${getColor(r)};"></i>
+            ${getStars(r)}<br>
+          `;
+        });
+
+        return div;
+      };
+      legendControl.addTo(map);
+
+      // 4) Mettre à jour le placeholder de recherche
+      if (searchControl && searchControl._input) {
+        searchControl._input.placeholder = t.searchPlaceholder;
+      }
+    }
+    
     spots.forEach((spot, index) => {
 
       let imagesHtml = "";
