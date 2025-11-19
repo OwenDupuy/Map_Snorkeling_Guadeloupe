@@ -1122,10 +1122,10 @@
     }
 
       const popupContent = `
-        <b>${spot.name}</b><br>
-        ${spot.desc}<br>
+        <b>${spot.name[currentLang]}</b><br>
+        ${spot.desc[currentLang]}<br>
         Note : ${getStars(spot.rating)}<br><br>
-        ${imagesHtml}
+        ${generateImagesHtml(spot, index)}
       `;
 
       const icon = L.divIcon({
@@ -1137,7 +1137,7 @@
       // 👉 on crée le marker, avec un "title" = nom du spot (utilisé par le plugin de recherche)
       const marker = L.marker(spot.coords, {
         icon,
-        title: spot.name
+        title: spot.name[currentLang]
       }).bindPopup(popupContent);
 
       // 👉 on garde les infos sur le marker pour les filtres plus tard
