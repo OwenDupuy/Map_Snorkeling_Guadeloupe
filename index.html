@@ -647,44 +647,6 @@
     </a>
   </div>
 
-  <!-- Parking invisible pour le module Disqus -->
-  <div id="disqus-parking" style="display:none;">
-    <div id="disqus_thread"></div>
-  </div>
-
-  <script>
-    // ⚠️ Remplace ici par TON shortname Disqus
-    const DISQUS_SHORTNAME = 'underwater-insights';
-
-    let disqusLoaded = false;
-
-    function loadDisqusForSpot(spotId) {
-      // première fois : on charge le script
-      if (!disqusLoaded) {
-        disqusLoaded = true;
-
-        window.disqus_config = function () {
-          this.page.url = window.location.href + '#' + spotId;
-          this.page.identifier = spotId;
-        };
-
-        const d = document, s = d.createElement('script');
-        s.src = 'https://' + DISQUS_SHORTNAME + '.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-      } else {
-        // ensuite : on change juste de fil de discussion
-        DISQUS.reset({
-          reload: true,
-          config: function () {
-            this.page.url = window.location.href + '#' + spotId;
-            this.page.identifier = spotId;
-          }
-        });
-      }
-    }
-  </script>
-
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/leaflet-search@4.0.0/dist/leaflet-search.min.js"></script>
 
@@ -1309,18 +1271,6 @@
           ${spot.desc[currentLang]}<br>
           Note : ${getStars(spot.rating)}<br><br>
           ${generateImagesHtml(spot, index)}
-          <div class="popup-comments" id="comments-container-${index}">
-            <button type="button"
-                    class="comments-toggle"
-                    data-spot-index="${index}">
-              ${t.commentsToggleClosed}
-            </button>
-            <div class="comments-panel hidden">
-              <div class="comments-hint">
-                ${t.commentsTitle}
-              </div>
-            </div>
-          </div>
         `;
 
         marker.bindPopup(newPopupContent);
@@ -1430,19 +1380,6 @@
         ${spot.desc[currentLang]}<br>
         Note : ${getStars(spot.rating)}<br><br>
         ${generateImagesHtml(spot, index)}
-        <div class="popup-comments" id="comments-container-${index}">
-          <button type="button"
-                  class="comments-toggle"
-                  data-spot-index="${index}">
-            ${t.commentsToggleClosed}
-          </button>
-          <div class="comments-panel hidden">
-            <div class="comments-hint">
-              ${t.commentsTitle}
-            </div>
-            <!-- Disqus sera déplacé ici -->
-          </div>
-        </div>
       `;
 
       const icon = L.divIcon({
@@ -1536,34 +1473,6 @@
         animate: true,
         duration: 0.6
       });
-      // --- 💬 Gestion du bouton et de Disqus ---
-      const popupEl = e.popup.getElement();
-      const t = i18n[currentLang];
-    
-      const toggleBtn = popupEl.querySelector('.comments-toggle');
-      const commentsPanel = popupEl.querySelector('.comments-panel');
-      const disqusThread = document.getElementById('disqus_thread');
-    
-      if (toggleBtn && commentsPanel) {
-        // fermé par défaut
-        commentsPanel.classList.add('hidden');
-        toggleBtn.textContent = t.commentsToggleClosed;
-    
-        toggleBtn.onclick = () => {
-          const isHidden = commentsPanel.classList.toggle('hidden');
-          toggleBtn.textContent = isHidden
-            ? t.commentsToggleClosed
-            : t.commentsToggleOpen;
-        };
-      }
-    
-      if (commentsPanel && disqusThread) {
-        commentsPanel.appendChild(disqusThread);   // Disqus dans le panneau
-        disqusThread.style.display = 'block';
-    
-        const spotId = 'spot-' + i;
-        loadDisqusForSpot(spotId);
-      }
     });
     
     map.on('popupclose', function (e) {
@@ -1577,13 +1486,6 @@
       if (sliderIntervals[i]) {
         clearInterval(sliderIntervals[i]);
         delete sliderIntervals[i];
-      }
-      // 💬 On remet Disqus dans le parking pour éviter qu’il parte avec la popup
-      const disqusThread = document.getElementById('disqus_thread');
-      const parking = document.getElementById('disqus-parking');
-      if (disqusThread && parking) {
-        parking.appendChild(disqusThread);
-        disqusThread.style.display = 'none';
       }
     });
 
