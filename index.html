@@ -344,11 +344,31 @@
       pointer-events: none;
     }
 
+    /* --- Instagram button bottom-right --- */
+    #insta-button {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      z-index: 9999;
+    }
+
+    #insta-button img {
+      width: 56px;           /* adjust size as you like */
+      height: auto;
+      border-radius: 50%;    /* makes it round if the image is square */
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      cursor: pointer;
+    }
+
     @media (max-width: 768px) {
 
       /* 1. Cacher le zoom sur mobile */
       .leaflet-control-zoom {
         display: none !important;
+      }
+
+      #insta-button img {
+        width: 46px;
       }
 
       /* 2. Réduire les marges et resserrer les contrôles en haut à gauche */
@@ -523,6 +543,15 @@
         <button class="btn-en" onclick="selectLanguage('en')">English</button>
       </div>
     </div>
+  </div>
+
+  <!-- 🔗 Instagram button -->
+  <div id="insta-button">
+    <a href="https://www.instagram.com/underwater_insights/"
+       target="_blank"
+       rel="noopener noreferrer">
+      <img src="images/insta.png" alt="Instagram Underwater Insights">
+    </a>
   </div>
   
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
