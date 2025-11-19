@@ -646,7 +646,8 @@
           osm: "Carte classique (OSM)",
           relief: "Relief / Topographie"
         },
-        changeLanguage: "Changer de langue"
+        changeLanguage: "Changer de langue",
+        commentsTitle: "💬 Commentaires sur ce spot :"
       },
       en: {
         legendTitle: "Spot quality",
@@ -668,7 +669,8 @@
           osm: "Classic map (OSM)",
           relief: "Relief / Topographic"
         },
-        changeLanguage: "Change language"
+        changeLanguage: "Change language",
+        commentsTitle: "💬 Comments on this spot:"
       }
     };
 
@@ -1235,11 +1237,10 @@
           ${generateImagesHtml(spot, index)}
           <div class="popup-comments" id="comments-container-${index}">
             <div class="comments-hint">
-              💬 Commentaires sur ce spot :
+              ${t.commentsTitle}
             </div>
           </div>
         `;
-
 
         marker.bindPopup(newPopupContent);
         marker.options.title = spot.name[currentLang]; // important pour la recherche
@@ -1348,7 +1349,7 @@
         ${generateImagesHtml(spot, index)}
         <div class="popup-comments" id="comments-container-${index}">
           <div class="comments-hint">
-            💬 Commentaires sur ce spot :
+            ${t.commentsTitle}
           </div>
           <!-- Disqus sera déplacé ici au moment d'ouvrir la popup -->
         </div>
