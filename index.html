@@ -415,17 +415,23 @@
     }
 
     @media (max-width: 768px) {
+      /* Limite la hauteur totale de la popup */
       .leaflet-popup-content {
-        font-size: 0.95em !important;   /* texte plus petit */
-        line-height: 1.3em;
+        max-height: 65vh;         /* <= la popup n'occupe jamais plus de 65% de la hauteur écran */
+        overflow-y: auto;         /* Ajoute un scroll interne si besoin */
+        font-size: 1.2em;         /* Légère réduction du texte */
+        padding: 4px 6px !important;  /* Marges internes un peu plus larges mais compactes */
       }
     
+      /* Wrapper interne de la popup */
       .leaflet-popup-content-wrapper {
-        padding: 8px 10px !important;   /* moins de marges internes */
+        padding: 10px 12px !important; /* un peu plus de marge mais compact */
+        border-radius: 12px !important;
       }
-      /* 1. Cacher le zoom sur mobile */
-      .leaflet-control-zoom {
-        display: none !important;
+    
+      /* Bulle globale : on ne change PAS la largeur */
+      .leaflet-popup {
+        max-width: 260px !important; /* même largeur qu'avant */
       }
 
       .comments-panel {
