@@ -100,8 +100,8 @@
 
     #filters-box {
       position: absolute;
-      left: 10px;
-      top: 70px;              /* ≈ sous la barre de recherche */
+      left: 20px;
+      top: 100px;              /* ≈ sous la barre de recherche */
       right: auto;
       bottom: auto;
       transform: none;
@@ -416,6 +416,33 @@
       .leaflet-control-layers-expanded {
         padding: 6px !important;
       }
+    }
+
+    /* Contrôles Leaflet intégrés dans le menu :
+   on enlève les floats et on les force en bloc */
+    #menu-baselayers .leaflet-control,
+    #menu-baselayers .leaflet-control-layers,
+    #menu-search-container .leaflet-control,
+    #menu-search-container .leaflet-control-search {
+      float: none;
+      clear: both;
+      display: block;
+      margin: 4px 0;
+    }
+    
+    /* On enlève la boîte indépendante et l’ombre portée */
+    #menu-baselayers .leaflet-control-layers,
+    #menu-search-container .leaflet-control-search {
+      box-shadow: none;
+      background: transparent;
+      border-radius: 0;
+      padding: 0;
+    }
+
+    /* On élargit le champ de recherche à 100 % du menu */
+    #menu-search-container .leaflet-control-search .search-input {
+      width: 100%;
+      box-sizing: border-box;
     }
 
 
