@@ -496,8 +496,8 @@
   <!-- MODALE DE LANGUE -->
   <div id="language-modal">
     <div class="language-modal-content">
-      <h2>Choisissez votre langue / Choose your language</h2>
-      <p>Vous pourrez changer de langue plus tard en rechargeant la page.</p>
+      <h2>Choose your language</h2>
+      <p>You can change the language later in the "Menu".</p>
       <div class="language-buttons">
         <button class="btn-fr" onclick="selectLanguage('fr')">Français</button>
         <button class="btn-en" onclick="selectLanguage('en')">English</button>
@@ -534,6 +534,7 @@
           osm: "Carte classique (OSM)",
           relief: "Relief / Topographie"
         },
+        changeLanguage: "Changer de langue"
       },
       en: {
         legendTitle: "Spot quality",
@@ -555,7 +556,7 @@
           osm: "Classic map (OSM)",
           relief: "Relief / Topographic"
         },
-
+        changeLanguage: "Change language"
       }
     };
 
@@ -1111,6 +1112,12 @@
         filtersTitleSpan.textContent = t.filtersTitle;
       }
 
+      // Texte du bouton "Changer de langue" dans le menu
+      const langBtn = document.querySelector('.lang-button');
+        if (langBtn) {
+          langBtn.textContent = `🌐 ${t.changeLanguage}`;
+        }
+      
       // === 🔥 Mise à jour des fonds de carte ===
       // On retire l’ancien contrôle
       if (layersControl) map.removeControl(layersControl);
