@@ -1112,6 +1112,21 @@
         filtersTitleSpan.textContent = t.filtersTitle;
       }
 
+      // === 🔥 Mise à jour des popups (titres + descriptions) ===
+      spots.forEach((spot, index) => {
+        const marker = spot._marker;
+
+        const newPopupContent = `
+          <b>${spot.name[currentLang]}</b><br>
+          ${spot.desc[currentLang]}<br>
+          Note : ${getStars(spot.rating)}<br><br>
+          ${generateImagesHtml(spot, index)}
+        `;
+
+        marker.bindPopup(newPopupContent);
+        marker.options.title = spot.name[currentLang]; // important pour la recherche
+      });
+
       // Texte du bouton "Changer de langue" dans le menu
       const langBtn = document.querySelector('.lang-button');
         if (langBtn) {
