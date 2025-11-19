@@ -101,7 +101,7 @@
     #filters-box {
       position: absolute;
       left: 20px;
-      top: 160px;              /* ≈ sous la barre de recherche */
+      top: 145px;              /* ≈ sous la barre de recherche */
       right: auto;
       bottom: auto;
       transform: none;
@@ -418,11 +418,27 @@
       }
     }
 
-    /* Contrôles Leaflet intégrés dans le menu : on enlève les floats et on les force en bloc */ 
-    #menu-baselayers .leaflet-control, 
-    #menu-baselayers .leaflet-control-layers, 
-    /* On enlève la boîte indépendante et l’ombre portée */ 
-    #menu-baselayers .leaflet-control-layers,
+    /* Contrôle des fonds de carte intégré dans le menu */
+    #menu-baselayers .leaflet-control,
+    #menu-baselayers .leaflet-control-layers {
+      float: none;        /* pas de flottant */
+      clear: both;
+      display: block;
+      margin: 0;          /* pas de marge autour de la boîte Leaflet */
+    }
+
+    /* On enlève la boîte indépendante et l’ombre portée */
+    #menu-baselayers .leaflet-control-layers {
+      background: transparent;
+      box-shadow: none;
+      border-radius: 0;
+      padding: 0;
+    }
+
+    /* Optionnel : un peu d’air autour du contenu du contrôle */
+    #menu-baselayers .leaflet-control-layers-list {
+      margin-top: 4px;
+    }
     
   </style>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-search@4.0.0/dist/leaflet-search.min.css">
