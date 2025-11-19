@@ -642,13 +642,7 @@
     ----------------------------------------------------------- */
     let baseLayers = {};
 
-    const layersControl = L.control.layers(baseLayers, null, {
-      collapsed: false
-    }).addTo(map);
-
-    // On déplace son container dans le menu
-    const layersContainer = layersControl.getContainer();
-    document.getElementById('menu-baselayers').appendChild(layersContainer);
+    let layersControl = null;
 
     /* ----------------------------------------------------------
        5. Fonctions utilitaires pour couleurs + étoiles
