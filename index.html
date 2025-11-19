@@ -353,11 +353,12 @@
     }
 
     #insta-button img {
-      width: 75px;           /* adjust size as you like */
-      height: auto;
-      border-radius: 75%;    /* makes it round if the image is square */
+      width: 100px;           /* adjust size as you like */
+      height: 100;
+      border-radius: 25px;    /* makes it round if the image is square */
       box-shadow: 0 0 10px rgba(0,0,0,0.4);
       cursor: pointer;
+      object-fit: cover;
     }
 
     @media (max-width: 768px) {
@@ -368,7 +369,7 @@
       }
 
       #insta-button img {
-        width: 46px;
+        width: 60px;
       }
 
       /* 2. Réduire les marges et resserrer les contrôles en haut à gauche */
