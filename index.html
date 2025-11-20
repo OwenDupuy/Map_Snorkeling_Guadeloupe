@@ -424,6 +424,18 @@
       font-size: 1.5em;
     }
 
+    #view-counter {
+      position: absolute;
+      left: 20px;
+      bottom: 20px;
+      z-index: 9999;
+      background: white;
+      padding: 6px 10px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.3);
+      font-size: 0.95em;
+      font-family: system-ui, sans-serif;
+    }
 
     @media (max-width: 768px) {
       /* Limite la hauteur totale de la popup */
@@ -631,6 +643,7 @@
     </div>
   </div>
 
+  <div id="view-counter">👁️ 0 visiteurs</div>
 
   <!-- MODALE DE LANGUE -->
   <div id="language-modal">
@@ -1547,6 +1560,39 @@
         });
       });
     });
+
+    // --- Compteur de vues uniques (par navigateur) ---
+
+    const COUNTER_NAMESPACE = 'underwater_insights';
+    const COUNTER_KEY = 'snorkeling_map';
+    const counterEl = document.getElementById('view-counter');
+    const hasVisited = localStorage.getItem('snorkeling_map_visited');
+  
+    async function updateViewCounter() {
+      const baseUrl = 'https://api.countapi.xyz';
+      // Si l’utilisateur a déjà visité (même navigateur), on ne fait que lire la valeur.
+      const url = hasVisited
+        ? `${baseUrl}/get/${COUNTER_NAMESPACE}/${COUNTER_KEY}`
+        : `${baseUrl}/hit/${COUNTER_NAMESPACE}/${COUNTER_KEY}`;
+  
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+  
+        const n = data.value ?? 0;
+        counterEl.textContent = `👁️ ${n} visiteur${n > 1 ? 's' : ''}`;
+  
+        // On marque ce navigateur comme "déjà compté"
+        if (!hasVisited) {
+          localStorage.setItem('snorkeling_map_visited', 'true');
+        }
+      } catch (err) {
+        console.error('Erreur compteur :', err);
+        counterEl.textContent = '👁️ compteur indisponible';
+      }
+    }
+  
+    updateViewCounter();
 
   </script>
 </body>
