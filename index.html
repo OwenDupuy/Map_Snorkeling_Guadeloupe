@@ -424,19 +424,6 @@
       font-size: 1.5em;
     }
 
-    #view-counter {
-      position: absolute;
-      left: 20px;
-      bottom: 20px;
-      z-index: 9999;
-      background: white;
-      padding: 6px 10px;
-      border-radius: 10px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.3);
-      font-size: 0.95em;
-      font-family: system-ui, sans-serif;
-    }
-
     @media (max-width: 768px) {
       /* Limite la hauteur totale de la popup */
       .leaflet-popup-content {
@@ -642,8 +629,6 @@
       <button class="lightbox-arrow right" onclick="changeLightboxImage(1)">›</button>
     </div>
   </div>
-
-  <div id="view-counter">👁️ 0 visiteurs</div>
 
   <!-- MODALE DE LANGUE -->
   <div id="language-modal">
@@ -1560,39 +1545,6 @@
         });
       });
     });
-
-    // --- Compteur de vues uniques avec hitcount.app ---
-
-    const counterEl = document.getElementById('view-counter');
-    const hasVisited = localStorage.getItem('snorkeling_map_visited');
-    
-    // ID unique pour ta carte
-    const COUNTER_ID = "underwater_insights_snorkeling_map";
-    
-    async function updateViewCounter() {
-    
-      let url = hasVisited
-        ? `https://hitcount.app/api/count/${COUNTER_ID}?read=true`
-        : `https://hitcount.app/api/count/${COUNTER_ID}`;
-    
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-    
-        const n = data.count ?? 0;
-        counterEl.textContent = `👁️ ${n} visiteur${n > 1 ? 's' : ''}`;
-    
-        if (!hasVisited) {
-          localStorage.setItem('snorkeling_map_visited', 'true');
-        }
-    
-      } catch (err) {
-        console.error('Erreur compteur :', err);
-        counterEl.textContent = '👁️ compteur indisponible';
-      }
-    }
-    
-    updateViewCounter();
 
   </script>
 </body>
