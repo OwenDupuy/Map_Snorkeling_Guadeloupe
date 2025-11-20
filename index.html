@@ -1561,37 +1561,37 @@
       });
     });
 
-    // --- Compteur de vues uniques (par navigateur) ---
+    // --- Compteur de vues uniques avec hitcount.app ---
 
-    const COUNTER_NAMESPACE = 'underwater_insights';
-    const COUNTER_KEY = 'snorkeling_map';
     const counterEl = document.getElementById('view-counter');
     const hasVisited = localStorage.getItem('snorkeling_map_visited');
-  
+    
+    // ID unique pour ta carte
+    const COUNTER_ID = "underwater_insights_snorkeling_map";
+    
     async function updateViewCounter() {
-      const baseUrl = 'https://api.countapi.xyz';
-      // Si l’utilisateur a déjà visité (même navigateur), on ne fait que lire la valeur.
-      const url = hasVisited
-        ? `${baseUrl}/get/${COUNTER_NAMESPACE}/${COUNTER_KEY}`
-        : `${baseUrl}/hit/${COUNTER_NAMESPACE}/${COUNTER_KEY}`;
-  
+    
+      let url = hasVisited
+        ? `https://hitcount.app/api/count/${COUNTER_ID}?read=true`
+        : `https://hitcount.app/api/count/${COUNTER_ID}`;
+    
       try {
         const res = await fetch(url);
         const data = await res.json();
-  
-        const n = data.value ?? 0;
+    
+        const n = data.count ?? 0;
         counterEl.textContent = `👁️ ${n} visiteur${n > 1 ? 's' : ''}`;
-  
-        // On marque ce navigateur comme "déjà compté"
+    
         if (!hasVisited) {
           localStorage.setItem('snorkeling_map_visited', 'true');
         }
+    
       } catch (err) {
         console.error('Erreur compteur :', err);
         counterEl.textContent = '👁️ compteur indisponible';
       }
     }
-  
+    
     updateViewCounter();
 
   </script>
