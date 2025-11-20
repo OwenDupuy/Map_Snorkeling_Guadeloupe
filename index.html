@@ -424,6 +424,41 @@
       font-size: 1.5em;
     }
 
+    /* === Animations et petits effets esthétiques === */
+
+    /* Animation ouverture de la lightbox (zoom + fade) */
+    .lightbox-inner {
+      opacity: 0;
+      transform: scale(0.94);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    
+    .lightbox:not(.hidden) .lightbox-inner {
+      opacity: 1;
+      transform: scale(1);
+    }
+    
+    /* Hover smooth sur le bouton Instagram */
+    #insta-button img {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    #insta-button img:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.35);
+    }
+    
+    /* Micro animation sur le bouton "Menu" */
+    .filters-header {
+      transition: background 0.2s ease, transform 0.1s ease;
+    }
+    
+    .filters-header:hover {
+      background: rgba(0,0,0,0.03);
+      transform: translateY(-1px);
+    }
+
+
     @media (max-width: 768px) {
       /* Limite la hauteur totale de la popup */
       .leaflet-popup-content {
