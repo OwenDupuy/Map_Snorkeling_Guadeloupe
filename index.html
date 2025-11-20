@@ -1387,26 +1387,6 @@
       markersLayer.addLayer(marker);
     });
 
-      const icon = L.divIcon({
-        className: `custom-marker rating-${spot.rating}`,
-        iconSize: [24, 24],
-        iconAnchor: [12, 12]
-      });
-
-      // 👉 on crée le marker, avec un "title" = nom du spot (utilisé par le plugin de recherche)
-      const marker = L.marker(spot.coords, {
-        icon,
-        title: spot.name[currentLang]
-      }).bindPopup(popupContent);
-
-      // 👉 on garde les infos sur le marker pour les filtres plus tard
-      marker.rating = spot.rating;  // note associée au marker
-      spot._marker = marker;        // on stocke le marker dans l'objet spot
-      marker.spotIndex = index;
-
-      // 👉 on l’ajoute au layer de markers (et donc à la carte)
-      markersLayer.addLayer(marker);
-    });
     /* ----------------------------------------------------------
        8. Légende étoiles + couleurs
     ----------------------------------------------------------- */
