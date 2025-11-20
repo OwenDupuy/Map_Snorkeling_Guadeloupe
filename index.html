@@ -683,7 +683,8 @@
         changeLanguage: "Changer de langue",
         commentsTitle: "💬 Commentaires sur ce spot :",
         commentsToggleClosed: "💬 Ajouter un commentaire",
-        commentsToggleOpen: "✕ Masquer les commentaires"
+        commentsToggleOpen: "✕ Masquer les commentaires",
+        itineraryLink: "📍 Itinéraire Google Maps"
       },
       en: {
         legendTitle: "Spot quality",
@@ -708,7 +709,8 @@
         changeLanguage: "Change language",
         commentsTitle: "💬 Comments on this spot:",
         commentsToggleClosed: "💬 Add a comment",
-        commentsToggleOpen: "✕ Hide comments"
+        commentsToggleOpen: "✕ Hide comments",
+        itineraryLink: "📍 Directions on Google Maps"
       }
     };
 
@@ -1254,6 +1256,25 @@
       `;
     }
 
+    // Génère le HTML complet de la popup d'un spot (titre, desc, note, photos, itinéraire)
+    function generatePopupContent(spot, index) {
+      const t = i18n[currentLang];
+      const [lat, lng] = spot.coords;
+      const gmapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+    
+      return `
+        <b>${spot.name[currentLang]}</b><br>
+        ${spot.desc[currentLang]}<br>
+        Note : ${getStars(spot.rating)}<br><br>
+        ${generateImagesHtml(spot, index)}
+        <br>
+        <a href="${gmapsUrl}" target="_blank" rel="noopener noreferrer">
+          ${t.itineraryLink}
+        </a>
+      `;
+    }
+
+    
     // === Appliquer la langue à l’interface ===
     function applyLanguage() {
       const t = i18n[currentLang];
@@ -1266,17 +1287,10 @@
 
       // === 🔥 Mise à jour des popups (titres + descriptions) ===
       spots.forEach((spot, index) => {
-        const t = i18n[currentLang];
-        
         const marker = spot._marker;
 
-        const newPopupContent = `
-          <b>${spot.name[currentLang]}</b><br>
-          ${spot.desc[currentLang]}<br>
-          Note : ${getStars(spot.rating)}<br><br>
-          ${generateImagesHtml(spot, index)}
-        `;
-
+        const newPopupContent = generatePopupContent(spot, index);
+      
         marker.bindPopup(newPopupContent);
         marker.options.title = spot.name[currentLang]; // important pour la recherche
       });
@@ -1353,38 +1367,25 @@
     
     spots.forEach((spot, index) => {
 
-      const t = i18n[currentLang];
-      
-      let imagesHtml = "";
-      if (spot.images && spot.images.length > 0) {
-      imagesHtml = `
-        <div class="slider">
-          <button type="button"
-                  class="slider-btn"
-                  onclick="changeImage(${index}, -1)">‹</button>
-          <div class="slider-img-wrapper"
-               onclick="openLightbox(${index})">
-            <img id="slider-img-${index}"
-                  src="${spot.images[0]}"
-                  alt="${spot.name}">
-          </div>
-          <button type="button"
-                  class="slider-btn"
-                  onclick="changeImage(${index}, 1)">›</button>
-        </div>
-        <div class="slider-counter"
-              id="slider-counter-${index}">
-              1 / ${spot.images.length}
-        </div>
-      `;
-    }
+      const popupContent = generatePopupContent(spot, index);
 
-      const popupContent = `
-        <b>${spot.name[currentLang]}</b><br>
-        ${spot.desc[currentLang]}<br>
-        Note : ${getStars(spot.rating)}<br><br>
-        ${generateImagesHtml(spot, index)}
-      `;
+      const icon = L.divIcon({
+        className: `custom-marker rating-${spot.rating}`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
+      });
+    
+      const marker = L.marker(spot.coords, {
+        icon,
+        title: spot.name[currentLang]
+      }).bindPopup(popupContent);
+    
+      marker.rating = spot.rating;
+      spot._marker = marker;
+      marker.spotIndex = index;
+    
+      markersLayer.addLayer(marker);
+    });
 
       const icon = L.divIcon({
         className: `custom-marker rating-${spot.rating}`,
