@@ -457,14 +457,39 @@
       background: rgba(0,0,0,0.03);
       transform: translateY(-1px);
     }
-    /* Style bloc ACCÈS dans les popups */
-    /* Style bloc ACCÈS dans les popups */
     .popup-access {
-      background: #f6faf7;
+      background: #ffffff;
       padding: 6px 8px;
       border-radius: 8px;
       margin-top: 6px;
     }
+
+    /* Ligne titre + note */
+    .popup-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    /* Titre spot */
+    .popup-title {
+      font-weight: bold;
+    }
+    
+    /* Note en haut à droite */
+    .popup-rating {
+      white-space: nowrap;
+      font-size: 1em;
+    }
+    
+    /* Centrage du lien Google Maps */
+    .popup-itinerary {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
 
     @media (max-width: 768px) {
       /* Limite la hauteur totale de la popup */
@@ -1367,9 +1392,13 @@
       const gmapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
     
       return `
-        <b>${spot.name[currentLang]}</b><br>
+        <div class="popup-header">
+          <div class="popup-title">${spot.name[currentLang]}</div>
+          <div class="popup-rating">${getStars(spot.rating)}</div>
+        </div>
+      
         ${spot.desc[currentLang]}<br>
-    
+      
         ${spot.access ? `
         <hr style="margin:10px 0;">
         <b>${i18n[currentLang].accessTitle}</b><br>
@@ -1377,15 +1406,17 @@
         ${spot.access[currentLang]}
         </div>
         ` : ""}
-    
-        Note : ${getStars(spot.rating)}<br><br>
-        ${generateImagesHtml(spot, index)}
+      
         <br>
-        <a href="${gmapsUrl}" target="_blank" rel="noopener noreferrer">
-          ${t.itineraryLink}
-        </a>
+        ${generateImagesHtml(spot, index)}
+      
+        <div class="popup-itinerary">
+          <a href="${gmapsUrl}" target="_blank" rel="noopener noreferrer">
+            ${t.itineraryLink}
+          </a>
+        </div>
       `;
-    }
+
     
     // === Appliquer la langue à l’interface ===
     function applyLanguage() {
