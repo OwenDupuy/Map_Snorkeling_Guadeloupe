@@ -457,7 +457,14 @@
       background: rgba(0,0,0,0.03);
       transform: translateY(-1px);
     }
-
+    /* Style bloc ACCÈS dans les popups */
+    /* Style bloc ACCÈS dans les popups */
+    .popup-access {
+      background: #f6faf7;
+      padding: 6px 8px;
+      border-radius: 8px;
+      margin-top: 6px;
+    }
 
     @media (max-width: 768px) {
       /* Limite la hauteur totale de la popup */
@@ -719,7 +726,8 @@
         commentsTitle: "💬 Commentaires sur ce spot :",
         commentsToggleClosed: "💬 Ajouter un commentaire",
         commentsToggleOpen: "✕ Masquer les commentaires",
-        itineraryLink: "📍 Itinéraire Google Maps"
+        itineraryLink: "📍 Itinéraire Google Maps",
+        accessTitle: "Accès"
       },
       en: {
         legendTitle: "Spot quality",
@@ -745,7 +753,8 @@
         commentsTitle: "💬 Comments on this spot:",
         commentsToggleClosed: "💬 Add a comment",
         commentsToggleOpen: "✕ Hide comments",
-        itineraryLink: "📍 Directions on Google Maps"
+        itineraryLink: "📍 Directions on Google Maps",
+        accessTitle: "Access"
       }
     };
 
@@ -864,6 +873,10 @@
         desc: {
           fr: "Un lieu incontournable pour observer des tortues marines. Pour maximiser vos chances, rejoignez la petite plage située au nord de la plage principale de Malendure : c’est là que les rencontres sont les plus fréquentes. On y croise aussi régulièrement des poissons-torpilles et quelques barracudas. La visibilité y est généralement très bonne, ce qui en fait un spot parfait pour une exploration tranquille.",
           en: "A must-see spot to observe sea turtles. To maximize your chances, head to the small beach located north of the main Malendure beach: this is where encounters are most frequent. Torpedo rays and a few barracudas are also commonly seen. Visibility is generally excellent, making it the perfect place for a peaceful exploration."
+        },
+        access: {
+          fr: "Accès à pied (~5 min de marche). Chemin facile. Plage de sable avec zones rocheuses à l’entrée dans l’eau. Peu fréquenté.",
+          en: "On foot (~5 min walk). Easy path. Sandy beach with rocky areas at water entry. Not crowded."
         },
         coords: [16.1726, -61.7791],
         rating: 4,
@@ -1356,6 +1369,15 @@
       return `
         <b>${spot.name[currentLang]}</b><br>
         ${spot.desc[currentLang]}<br>
+    
+        ${spot.access ? `
+        <hr style="margin:10px 0;">
+        <b>${i18n[currentLang].accessTitle}</b><br>
+        <div class="popup-access">
+        ${spot.access[currentLang]}
+        </div>
+        ` : ""}
+    
         Note : ${getStars(spot.rating)}<br><br>
         ${generateImagesHtml(spot, index)}
         <br>
@@ -1364,7 +1386,6 @@
         </a>
       `;
     }
-
     
     // === Appliquer la langue à l’interface ===
     function applyLanguage() {
